@@ -1,0 +1,34 @@
+{
+    "Acetylation": {
+        "left": 7,
+        "right": 7
+    },
+    "Sumoylation": {
+        "left": 2,
+        "right": 1
+    },
+    "Malonylation": {
+        "left": 7,
+        "right": 7
+    },
+    "other": {
+        "left": 7,
+        "right": 7
+    },
+    "Ubiquitination": {
+        "left": 7,
+        "right": 7
+    },
+    "Succinylation": {
+        "left": 6,
+        "right": 7
+    },
+    "Glycation": {
+        "left": 7,
+        "right": 7
+    },
+    "Methylation": {
+        "left": 7,
+        "right": 7
+    }
+}

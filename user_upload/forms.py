@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+from django import forms
+
+
+# 这个表单类还得改，在每个field中添加widget参数形式为  widget=forms.XXXInput(attrs={"class": "XXX", "placeholder": "XXX"})
+# attrs中都是CSS和bootstrap的形式
+class UploadForm(forms.Form):
+    # 用户输入elm、vcf或者Tab格式文本的文本框
+    input_text = forms.CharField(label="data input", required=False,
+                                 widget=forms.Textarea(attrs={"cols": "100", "rows": "60"}))
+    # 上传elm、vcf和Tab文件的表单元素
+    elm_file = forms.FileField(label="elm file", required=False)
+    vcf_file = forms.FileField(label="vcf file", required=False)
+    tab_file = forms.FileField(label="Tab file", required=False)
+    # 物种选项，暂定会有多个物种，返回类型是字符串
+    organism = forms.ChoiceField(label="Organism*", choices=(("human", "Homo sapiens"), ("mouse", "Mus musculus"),),
+                                 required=True, initial="human", widget=forms.widgets.Select)
+    # 修饰类型选项，返回类型是列表
+    modification = forms.MultipleChoiceField(label="Modification",
+                                             choices=(("Acethylation", "Acethylation"), ("Glycation", "Glycation"),
+                                                      ("Malonylation", "Malonylation"),),
+                                             required=False, initial=["Acethylation", ],
+                                             widget=forms.widgets.SelectMultiple)
+    # , widget=forms.widgets.SelectMultiple
+    # 癌症类型，只有在物种选定为人的时候才有效，返回类型是列表
+    cancer = forms.MultipleChoiceField(label="Cancer",
+                                       choices=((1, "BRCA"), (2, "UCSC")), required=False, initial=[1, ],
+                                       widget=forms.widgets.SelectMultiple)
+    # 阈值选取
+    threshold = forms.ChoiceField(label="Threshold*",
+                                  choices=(("h", "High"), ("m", "Medium"), ("l", "Low"),), required=True, initial=1,
+                                  widget=forms.widgets.Select)
+    # 填写用户的email
+    email = forms.EmailField(label="E-mail address(Optional)", required=False)
+

@@ -1,0 +1,8 @@
+refseq	Uniprot Accession	protein_name	position	mut_from	mut_to	chr	chr_position
+NP_056962	O14977	Antizyme inhibitor 1 (AZI) (AZI1) (Ornithine decarboxylase antizyme inhibitor)	1133	Q	K	17	78302157
+NP_056962	O14977	Antizyme inhibitor 1 (AZI) (AZI1) (Ornithine decarboxylase antizyme inhibitor)	200	Q	K	17	78300157
+NP_005505	P01889	HLA class I histocompatibility antigen, B-7 alpha chain (MHC class I antigen B*7)	160	W	R	17	41133071
+NP_006591	Q9Y266	Nuclear migration protein nudC (Nuclear distribution protein C homolog)	1384	T	S	2	43625184
+NP_006591	Q9Y266	Nuclear migration protein nudC (Nuclear distribution protein C homolog)	284	T	S	2	43620184
+NP_006591	Q9Y266	Nuclear migration protein nudC (Nuclear distribution protein C homolog)	884	T	S	2	43620184
+NP_006591	Q9Y266	Nuclear migration protein nudC (Nuclear distribution protein C homolog)	996	T	S	2	43620184

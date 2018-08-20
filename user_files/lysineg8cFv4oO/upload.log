@@ -1,0 +1,8 @@
+2018-08-18 11:38:54,452 - uploadProcess - user_upload - DEBUG : elm file upload completed.
+2018-08-18 11:38:54,486 - uploadProcess - user_upload - DEBUG : successfully upload.
+2018-08-18 11:39:33,957 - uploadProcess - user_upload - ERROR : Invalid elm file suffix. Fail to upload.
+2018-08-18 12:35:35,100 - uploadProcess - user_upload - DEBUG : elm file upload completed.
+2018-08-18 12:35:35,107 - uploadProcess - user_upload - DEBUG : vcf file upload completed.
+2018-08-18 12:35:35,143 - uploadProcess - user_upload - DEBUG : successfully upload.
+2018-08-18 13:23:55,285 - uploadProcess - user_upload - DEBUG : tab file upload completed.
+2018-08-18 13:23:55,317 - uploadProcess - user_upload - DEBUG : successfully upload.
