@@ -8,7 +8,7 @@ from .models import UserFile
 from .forms import UploadForm
 from django.utils import timezone
 from .cookies import Cookies
-from .check_format import FormatChecker
+# from .check_format import FormatChecker
 import logging
 import logging.config
 import logging.handlers
@@ -63,21 +63,21 @@ def user_upload(request):
     logger = setup_logging(user_dir=user_dir, default_config=log_default_config)
 
 # -----------------------对用户表单中提交的数据进行验证，验证过程记录在日志中---------------------------------------------------
-    # 用户是否在文本框中输入数据
-    text_context = request.POST["input_text"]
-    if text_context:
-        # 如果input_text中有内容先判断属于哪类文本并保存。如果都不符合elm、vcf和Tab格式，则报错
-        try:
-            has_elm, has_vcf, has_tab = FormatChecker.textarea_handler(text_context, upload_path,
-                                                                       has_elm, has_vcf, has_tab, logger)
-        except RuntimeError:
-            # 如果格式不对会报出RuntimeError
-            response = render(request=request, template_name="user_upload/upload.html",
-                              context={"form": form, "input_text.error": "invalid format in textarea"})
-            response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
-            os.rmdir(upload_path)
-            logger.error("Invaild text input. Fail to upload.")
-            return response
+#     # 用户是否在文本框中输入数据
+#     text_context = request.POST["input_text"]
+#     if text_context:
+#         # 如果input_text中有内容先判断属于哪类文本并保存。如果都不符合elm、vcf和Tab格式，则报错
+#         try:
+#             has_elm, has_vcf, has_tab = FormatChecker.textarea_handler(text_context, upload_path,
+#                                                                        has_elm, has_vcf, has_tab, logger)
+#         except RuntimeError:
+#             # 如果格式不对会报出RuntimeError
+#             response = render(request=request, template_name="user_upload/upload.html",
+#                               context={"form": form, "input_text.error": "invalid format in textarea"})
+#             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
+#             os.rmdir(upload_path)
+#             logger.error("Invaild text input. Fail to upload.")
+#             return response
 
 # ---------------------对用户提交的文件进行处理-----------------------------------------------
 
@@ -216,6 +216,7 @@ def user_upload(request):
                           context={"form": UploadForm(), "file_upload_rule": file_upload_rule})
         logger.error("not keep the file upload rule. Fail to upload.")
         shutil.rmtree(upload_path)
+        return response
     # 对COOKIE信息进行更新，返回的response是一个HttpResponse类
     response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
     u = UserFile.objects.get(user_dir=upload_path)

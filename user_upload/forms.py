@@ -24,7 +24,7 @@ class UploadForm(forms.Form):
     # , widget=forms.widgets.SelectMultiple
     # 癌症类型，只有在物种选定为人的时候才有效，返回类型是列表
     cancer = forms.MultipleChoiceField(label="Cancer",
-                                       choices=((1, "BRCA"), (2, "UCSC")), required=False, initial=[1, ],
+                                       choices=(("BRCA", "BRCA"), ("UCSC", "UCSC")), required=False, initial=["BRCA", ],
                                        widget=forms.widgets.SelectMultiple)
     # 阈值选取
     threshold = forms.ChoiceField(label="Threshold*",

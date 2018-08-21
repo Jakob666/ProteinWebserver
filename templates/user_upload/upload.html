@@ -139,11 +139,16 @@
                    "tab_file": tab_file, "modification": modification
             },
             async: false,
-            success:function (response) {
-                // 一旦请求成功，if_upload变量的值为true
-                if_upload = true;
-                console.log(if_upload);
+{#            success:function (response) {#}
+{#                // 一旦请求成功，if_upload变量的值为true#}
+{#                if_upload = true;#}
+{#                console.log(if_upload);#}
 {#                calculate();#}
+{#            },#}
+            complete: function () {
+              console.log("上传完成");
+              if_upload = true;
+              calculate();
             },
             error:function (r1) {
                 // 请求失败，if_upload变量的值为false
@@ -153,50 +158,39 @@
         });
     }
 
-{#    function calculate() {#}
-{#        if (if_upload == true){#}
-{#            console.log(if_upload);#}
-{#            if_upload = null;#}
-{#            var organism = $('#id_organism').val();#}
-{#            var cancer = $('#id_cancer').val();#}
-{#            var threshold = $('#id_threshold').val();#}
-{#            var email = $('#id_email').val();#}
-{#            var modification = $('#id_modification').val();#}
-{#            $.ajax({#}
-{#                method: "post",#}
-{#                url: "/test/elm_res/",#}
-{#                processData: false,#}
-{#                data: {"modification": modification, "organism": organism,#}
-{#                       "cancer": cancer, "threshold": threshold, "email": email#}
-{#                },#}
-{#                async: false,#}
-{#                success: function (r1) {#}
-{#                    console.log("calculation的ajax请求成功");#}
-{#                },#}
-{#                error: function (r1) {#}
-{#                    console.log("calculation的ajax请求失败");#}
-{#                }#}
-{#            })#}
-{##}
-{#        }#}
-{##}
-{#        else if (if_upload == false){#}
-{#            console.log("cnm");#}
-{#            if_upload = null;#}
-{##}
-{#        }#}
-{##}
-{#    }#}
+    function calculate() {
+        if (if_upload){
+            console.log(if_upload);
+            if_upload = null;
+            var organism = $('#id_organism').val();
+            var cancer = $('#id_cancer').val();
+            var threshold = $('#id_threshold').val();
+            var email = $('#id_email').val();
+            var modification = $('#id_modification').val();
+            $.ajax({
+                method: "post",
+                url: "/test/elm_res/",
+                processData: false,
+                data: {"modification": modification, "organism": organism,
+                       "cancer": cancer, "threshold": threshold, "email": email
+                },
+                async: true,
+                complete: function () {
+                    console.log("wancheng")
+                },
+                error: function (r1) {
+                    console.log("calculation的ajax请求失败");
+                }
+            })
+        }
+        else{
+            console.log("cnm");
+            if_upload = null;
 
+        }
 
+    }
 
-{#    $('#upload_success').change(function () {#}
-{#        console.log("cnm");#}
-{#        $(this).text("start calculating...");#}
-
-{#        var user_dir = getCookie("user_dir");#}
-{#        console.log(user_dir);#}
-{#    });#}
 
 </script>
 </html>

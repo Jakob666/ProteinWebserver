@@ -76,9 +76,10 @@ def test_result_elm2(request):
 
     # 进行分析工作之前先创建日志对象
     logger = setup_logging(os.path.join(user_dir, latest_upload), default_config=log_file_config)
+    logger.debug(has_elm)
+    logger.debug(has_vcf)
+    logger.debug(has_tab)
 
-    # 之后对该文件目录中的文件进行分析，用户提交的数据可以分为五种情况，只有当物种为human时，才会考虑癌症
-    g = GetMutationInfo()
     # 获取POST方式提交的数据，其中modification是list形式， organism是字符串形式， threshold是字符串形式， cancer是list形式
     modification = request.POST["modification"]
     organism = request.POST["organism"]
@@ -110,23 +111,19 @@ def test_result_elm2(request):
 
     # （5）仅上传elm文件
     elif has_elm:
+        g = GetMutationInfo()
         if organism == "human":
             for c in cancer:
                 area_len, motif_mut, background_mut = g.main(elm_file, c)
                 s = SignificanceTest(motif_mut, background_mut, area_len)
                 s.get_result()
+                res = "\n".join(["\t".join(list(map(str, i.values()))) for i in s.test_res])
         else:
             area_len, motif_mut, background_mut = g.main(elm_file)
             s = SignificanceTest(motif_mut, background_mut, area_len)
             s.get_result()
-
-    # area_len, motif_mut, background_mut = g.main("C:/Users/hbs/Desktop/lysine/test_user.elm", "BRCA")
-    # s = SignificanceTest(motif_mut, background_mut, area_len)
-    # s.get_result()
-    # s.test_res.sort(key=itemgetter("p_value"))
-    # res = "\n".join(["\t".join(list(map(str, i.values()))) for i in s.test_res])
-    # return HttpResponse(elm_file+"\t"+vcf_file+"\t"+tab_file+"\t"+cancer)
-    # return HttpResponse(ut)
+            res = "\n".join(["\t".join(list(map(str, i.values()))) for i in s.test_res])
+        return HttpResponse(res)
 
 
 def annotate_for_vcf_and_tab(user_dir, latest_upload, logger, vcf_file=None, tab_file=None):
@@ -309,19 +306,21 @@ def judge_from_upload_log(upload_log):
         else:
             with open(upload_log, "r", encoding="utf-8") as log:
                 log_content = log.read()
-            break
+            # 如果出现 successfully upload，说明上传成功
+            if "successfully upload." in log_content:
+                break
+            # 如果日志的内容中出现 Fail to upload的字样，则说明本次上传文件失败，不进行后续的预测。
+            elif "Fail to upload." in log_content:
+                raise RuntimeError("upload failed")
+            else:
+                continue
 
-    # 如果日志的内容中出现 Fail to upload的字样，则说明本次上传文件失败，不进行后续的预测。反之，如果出现 successfully upload，说明上传
-    # 成功可以进行后续分析
-    if "Fail to upload." in log_content:
-        raise RuntimeError("upload failed")
-    if "successfully upload." in log_content:
-        # 通过日志内容获取本次用户提交了那些文件
-        if "elm file upload completed." in log_content:
-            has_elm = True
-        if "vcf file upload completed." in log_content:
-            has_vcf = True
-        if "tab file upload completed." in log_content:
-            has_tab = True
+    # 通过日志内容获取本次用户提交了那些文件
+    if "elm file upload completed." in log_content:
+        has_elm = True
+    if "vcf file upload completed." in log_content:
+        has_vcf = True
+    if "tab file upload completed." in log_content:
+        has_tab = True
 
     return has_elm, has_vcf, has_tab
