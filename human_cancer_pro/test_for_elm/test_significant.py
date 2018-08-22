@@ -28,7 +28,7 @@ class SignificanceTest:
         self.area_len = area_len
         self.sample_num = sample_num
         # 初始化一个dict用于存放用户提交的蛋白的检验结果
-        self.test_res = []
+        self.test_res = {}
 
     def get_result(self):
         """
@@ -37,18 +37,25 @@ class SignificanceTest:
         注意：只保留修饰区和非修饰区同时存在突变的蛋白。
         :return:
         """
-        self.motif_mut = self.motif_mut.groupby(by="Uniprot Accession", as_index=False)["count"].sum()
-        self.background_mut = self.background_mut.groupby(by="Uniprot Accession", as_index=False)["count"].sum()
-        self.motif_mut = self.motif_mut[self.motif_mut["count"] != 0]
-        self.background_mut = self.background_mut[self.background_mut["count"] != 0]
-        proteins = set(self.motif_mut["Uniprot Accession"]) & set(self.background_mut["Uniprot Accession"])
+        mm = self.motif_mut.groupby(by="Uniprot Accession", as_index=False)["count"].sum()
+        bm = self.background_mut.groupby(by="Uniprot Accession", as_index=False)["count"].sum()
+        mm = mm[mm["count"] != 0]
+        bm = bm[bm["count"] != 0]
+        proteins = set(mm["Uniprot Accession"]) & set(bm["Uniprot Accession"])
         for protein in proteins:
-            self.significant_test(protein)
+            self.significant_test(protein, mm, bm)
+            area = self.area_len[self.area_len["Uniprot Accession"] == protein].values
+            self.test_res[protein]["motif_length"] = area[0][1]
+            self.test_res[protein]["background_length"] = area[0][2]
+            motif_mut = self.motif_mut[self.motif_mut["Uniprot Accession"] == protein].values.tolist()
+            back_mut = self.background_mut[self.background_mut["Uniprot Accession"] == protein].values.tolist()
+            self.test_res[protein]["background_mutation"] = back_mut
+            self.test_res[protein]["motif_mutation"] = motif_mut
         # return None
 
-    def get_samples(self, protein):
-        motif_mut = int(self.motif_mut[self.motif_mut["Uniprot Accession"] == protein]["count"])
-        background_mut = int(self.background_mut[self.background_mut["Uniprot Accession"] == protein]["count"])
+    def get_samples(self, protein, motif_mut, background_mut):
+        motif_mut = int(motif_mut[motif_mut["Uniprot Accession"] == protein]["count"])
+        background_mut = int(background_mut[background_mut["Uniprot Accession"] == protein]["count"])
         motif_len = int(self.area_len[self.area_len["Uniprot Accession"] == protein]["motif_len"])
         background_len = int(self.area_len[self.area_len["Uniprot Accession"] == protein]["background_len"])
         gd = GammaDistribution(motif_mut, background_mut, motif_len, background_len, self.sample_num)
@@ -56,17 +63,19 @@ class SignificanceTest:
         lambda1_sample, lambda2_sample = gd.gamma_sample()
         return lambda1_sample, lambda2_sample
 
-    def significant_test(self, protein):
+    def significant_test(self, protein, motif_mut, back_mut):
         """
         传入protein，得到其验是否是赖氨酸相关的显著突变蛋白的判断。假设lambda1、lambda2分别是非修饰区和修饰区平均突变数的采样样本值
         h0: 非修饰区不小于修饰区突变次数    （lambda1/lambda2 >= 1）
         h1: 非修饰区比修饰区突变次数少      （lambda1/lambda2 < 1）
         是单尾检验
         :param protein: protein的 Uniprot ID，对该蛋白进行突变显著性检验
+        :param motif_mut: 蛋白质在修饰区的突变计数
+        :param back_mut: 蛋白质在非修饰区的突变计数
         :return:
         """
         # lambda1、lambda2分别是非修饰区和修饰区平均突变数的采样样本值
-        lambda1, lambda2 = self.get_samples(protein)
+        lambda1, lambda2 = self.get_samples(protein, motif_mut, back_mut)
         # 用非修饰区的平均突变数除以修饰区的平均突变数
         r = np.array(lambda1) / np.array(lambda2)
         ratio = 0
@@ -79,6 +88,6 @@ class SignificanceTest:
             significance = False
         else:
             significance = True
-        self.test_res.append({"protein": protein, "significance": significance, "p_value": ratio})
+        self.test_res[protein] = {"significance": significance, "p_value": format(ratio, '0.5E')}
         return None
 

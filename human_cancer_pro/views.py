@@ -18,6 +18,8 @@ import logging
 import logging.config
 import logging.handlers
 import yaml
+import json
+from collections import ChainMap
 
 
 # Create your views here.
@@ -84,10 +86,13 @@ def test_result_elm2(request):
     logger.debug(has_tab)
 
     # 获取POST方式提交的数据，其中modification是list形式， organism是字符串形式， threshold是字符串形式， cancer是list形式
-    modification = request.POST["modification"]
+    modification = request.POST.getlist("modification")
+    logger.debug("\t".join(modification))
     organism = request.POST["organism"]
+    logger.debug(organism)
     threshold = request.POST["threshold"]
-    cancer = request.POST["cancer"]
+    cancer = request.POST.getlist("cancer")
+    logger.debug("\t".join(cancer))
     email = request.POST["email"]
     elm_file = os.path.join(user_dir, latest_upload, "user.elm")
     vcf_file = os.path.join(user_dir, latest_upload, "user.vcf")
@@ -120,20 +125,23 @@ def test_result_elm2(request):
     elif has_elm:
         logger.debug("only analysis elm file")
         g = GetMutationInfo()
+        result = {}
         if organism == "human":
             for c in cancer:
                 area_len, motif_mut, background_mut = g.main(elm_file, c)
                 s = SignificanceTest(motif_mut, background_mut, area_len)
                 s.get_result()
-                res = "\n".join(["\t".join(list(map(str, i.values()))) for i in s.test_res])
+                res = {"cancer": c, "test_res": s.test_res}
+                result = dict(ChainMap(result, res))
         else:
             area_len, motif_mut, background_mut = g.main(elm_file)
+            area_len.to_csv(os.path.join(user_dir, latest_upload, "area_len.txt"), sep="\t", index=False, mode="a")
             s = SignificanceTest(motif_mut, background_mut, area_len)
             s.get_result()
-            res = "\n".join(["\t".join(list(map(str, i.values()))) for i in s.test_res])
-        print(res)
-        # with open(os.path.join(user_dir, latest_upload, "res.txt" ), "w") as f:
-        #     f.write(res)
+
+        with open(os.path.join(user_dir, latest_upload, "res.json"), "w") as f:
+            json.dump(result, f, indent=4)
+
         return None
 
 
@@ -251,15 +259,6 @@ def get_mutate_vcf(request):
     :return:
     """
     warnings.filterwarnings("ignore")
-    # v2a = Vcf2Avinput(vcf_file="C:\\Users\\hbs\\Desktop\\Lysine_TCGA\\human_cancer_pro\\test_for_vcf\\test_user.vcf",
-    #                   avin_file="C:\\Users\\hbs\\Desktop\\Lysine_TCGA\\human_cancer_pro\\test_for_vcf\\test_user.avinput")
-    # v2a.vcf2avin()
-    # AnnovarAnnotate.annotate(user_dir="C:\\Users\\hbs\\Desktop\\Lysine_TCGA\\human_cancer_pro\\test_for_vcf",
-    #                          avinput_file="C:\\Users\\hbs\\Desktop\\Lysine_TCGA\\human_cancer_pro\\test_for_vcf\\test_user.avinput")
-    # annovar_res = AnnovarAnnotate.variant_process(user_dir="C:\\Users\\hbs\\Desktop\\Lysine_TCGA\\human_cancer_pro\\test_for_vcf",
-    #                                               output_prefix="ex1")
-    # AnnovarAnnotate.match2uniport(annovar_res,
-    #                               user_dir="C:\\Users\\hbs\\Desktop\\Lysine_TCGA\\human_cancer_pro\\test_for_vcf")
     mut_data, modify_position = GetMutationVCF.get_motif_range(
         annotate_file="C:/Users/hbs/Desktop/lysine/vcf_annotated.tsv",
         ticked_modify=["Acetylation", "Glycation"],
