@@ -11,6 +11,7 @@ from .CONFIG import log_file_config
 from .mail2admin import Mail2Admin
 import os
 import numpy as np
+import pandas as pd
 import warnings
 from operator import itemgetter
 import logging
@@ -65,6 +66,8 @@ def test_result_elm2(request):
     has_elm, has_vcf, has_tab = None, None, None
     try:
         has_elm, has_vcf, has_tab = judge_from_upload_log(upload_log)
+        with open(upload_log, "w") as log:
+            log.write("")
     except RuntimeError:
         exit()
 
@@ -91,26 +94,31 @@ def test_result_elm2(request):
     tab_file = os.path.join(user_dir, latest_upload, "user.tab")
     # （1）同时上传elm和vcf文件
     if has_elm and has_vcf:
+        logger.debug("analysis elm and vcf file")
         testing(user_dir=user_dir, latest_upload=latest_upload, logger=logger, organism=organism, elm_file=elm_file,
                 vcf_file=vcf_file, cancer=cancer)
 
     # （2）同时上传elm和tab文件
     elif has_elm and has_tab:
+        logger.debug("analysis elm and tab file")
         testing(user_dir=user_dir, latest_upload=latest_upload, logger=logger, organism=organism, elm_file=elm_file,
                 tab_file=tab_file, cancer=cancer)
 
     # （3）仅上传vcf文件，同时点选modification选项
     elif has_vcf and modification:
+        logger.debug("analysis vcf file and ticjed modifications")
         testing(user_dir=user_dir, latest_upload=latest_upload, logger=logger, organism=organism, vcf_file=vcf_file,
                 modification=modification, cancer=cancer)
 
     # （4）仅上传tab文件，同时点选modification选项
     elif has_tab and modification:
+        logger.debug("analysis tab file and ticjed modifications")
         testing(user_dir=user_dir, latest_upload=latest_upload, logger=logger, organism=organism, tab_file=tab_file,
                 modification=modification, cancer=cancer)
 
     # （5）仅上传elm文件
     elif has_elm:
+        logger.debug("only analysis elm file")
         g = GetMutationInfo()
         if organism == "human":
             for c in cancer:
@@ -123,7 +131,10 @@ def test_result_elm2(request):
             s = SignificanceTest(motif_mut, background_mut, area_len)
             s.get_result()
             res = "\n".join(["\t".join(list(map(str, i.values()))) for i in s.test_res])
-        return HttpResponse(res)
+        print(res)
+        # with open(os.path.join(user_dir, latest_upload, "res.txt" ), "w") as f:
+        #     f.write(res)
+        return None
 
 
 def annotate_for_vcf_and_tab(user_dir, latest_upload, logger, vcf_file=None, tab_file=None):

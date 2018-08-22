@@ -9,6 +9,7 @@ from .forms import UploadForm
 from django.utils import timezone
 from .cookies import Cookies
 # from .check_format import FormatChecker
+from human_cancer_pro.views import test_result_elm2
 import logging
 import logging.config
 import logging.handlers
@@ -223,6 +224,7 @@ def user_upload(request):
     u.upload_success = 1
     u.save()
     logger.debug("successfully upload.")
+    test_result_elm2(request)
     return response
 
 
