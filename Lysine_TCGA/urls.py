@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^test/', include("human_cancer_pro.urls")),
     url(r'^webserver/', include("user_upload.urls")),
-    url(r'^check_log/', include("log_checker.urls"))
+    url(r'^check_log/', include("log_checker.urls")),
+    url(r'^get_example/', include("getExample.urls"))
 ]

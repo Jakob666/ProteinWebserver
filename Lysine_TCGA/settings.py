@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'human_cancer_pro.apps.HumanCancerProConfig',
     'user_upload.apps.UserUploadConfig',
     'log_checker.apps.LogCheckerConfig',
+    'getExample.apps.GetexampleConfig',
 ]
 
 MIDDLEWARE = [

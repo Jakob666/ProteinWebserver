@@ -7,7 +7,7 @@ from django import forms
 class UploadForm(forms.Form):
     # 用户输入elm、vcf或者Tab格式文本的文本框
     input_text = forms.CharField(label="data input", required=False,
-                                 widget=forms.Textarea(attrs={"cols": "100", "rows": "60"}))
+                                 widget=forms.Textarea(attrs={"cols": "100", "rows": "6"}))
     # 上传elm、vcf和Tab文件的表单元素
     elm_file = forms.FileField(label="elm file", required=False)
     vcf_file = forms.FileField(label="vcf file", required=False)

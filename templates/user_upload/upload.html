@@ -19,6 +19,9 @@
                 input_text.error
             {% endif %}
         </div>
+        <input id="elm_example" type="submit" value="elm exmple" />
+        <input id="vcf_example" type="submit" value="vcf exmple" />
+        <input id="tab_example" type="submit" value="tab exmple" />
         <div>
             {{ file_upload_rule }}
         </div>
@@ -143,8 +146,6 @@
         }
     });
 
-{#    var users_dir = "C:\\Users\\hbs\\Desktop\\Lysine_TCGA\\user_files\\";#}
-
     function upload() {
         var input_text = $('#id_input_text').val();
         var elm_file = $('#id_elm_file')[0].files[0];
@@ -165,12 +166,6 @@
                    "threshold": threshold, "email": email, "organism": organism
             },
             async: true,
-{#            success:function (response) {#}
-{#                // 一旦请求成功，if_upload变量的值为true#}
-{#                if_upload = true;#}
-{#                console.log(if_upload);#}
-{#                calculate();#}
-{#            },#}
             complete: function () {
               console.log("上传完成");
               obj.if_upload = true;
@@ -216,6 +211,42 @@
         });
         return has_result;
     }
+
+    $("#elm_example").click(function () {
+        $("#text_input").val("");
+        showExample($("#elm_example").val());
+    });
+    $("#vcf_example").click(function () {
+        $("#text_input").val("");
+        showExample($("#vcf_example").val())
+    });
+    $("#tab_example").click(function () {
+        $("#text_input").val("");
+        showExample($("#tab_example").val())
+    });
+
+    function showExample(exampleType) {
+        $.ajax({
+            type: "post",
+            url: "/get_example/",
+            data: {"exampleType": exampleType},
+            asyns: false,
+            success: function (ret) {
+                $("#id_input_text").val(ret);
+                console.log(ret);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+                console.log(errorThrown);
+                console.log("样例文件导出失败");
+            }
+        });
+    }
+
+    
+
 
 
 </script>
