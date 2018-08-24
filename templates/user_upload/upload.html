@@ -87,8 +87,8 @@
     </div>
     <br />
     <br />
-    <table>
-        <tr></tr>
+    <table {% if cnm %} {% endif %}>
+        <tr>{{ cnm }}</tr>
     </table>
 </body>
 <script type="text/javascript">
@@ -133,10 +133,12 @@
             if_upload = newValue;
             console.log("set:", newValue);
             if (newValue)
-                calculate();
+                readLog();
         }
     });
-{#    var if_upload = $.Callbacks();#}
+
+{#    var users_dir = "C:\\Users\\hbs\\Desktop\\Lysine_TCGA\\user_files\\";#}
+
     function upload() {
         var input_text = $('#id_input_text').val();
         var elm_file = $('#id_elm_file')[0].files[0];
@@ -156,7 +158,7 @@
                    "tab_file": tab_file, "modification": modification, "cancer": cancer,
                    "threshold": threshold, "email": email, "organism": organism
             },
-            async: false,
+            async: true,
 {#            success:function (response) {#}
 {#                // 一旦请求成功，if_upload变量的值为true#}
 {#                if_upload = true;#}
@@ -165,7 +167,7 @@
 {#            },#}
             complete: function () {
               console.log("上传完成");
-{#              obj.if_upload = true;#}
+              obj.if_upload = true;
             },
             error:function (r1) {
                 // 请求失败，if_upload变量的值为false
@@ -174,27 +176,34 @@
         });
     }
 
-{#    callbacks.add(if_upload);#}
+    // 定义一个读取日志的方法，对日志的内容进行获取并调整前端的显示
+    function readLog() {
+        var cook_info = document.cookie;
+        cook_info = cook_info.split(";");
+        var username;
+        // 首先从cookie中获取用户名
+        for (var i = 0; i < cook_info.length; i++) {
+            var info = cook_info[i].trim().split("=");
+            if (info[0] == "cname") {
+                username = info[2].split('"')[0];
+                console.log(username);
+            }
+        }
 
-    function calculate() {
-        var organism = $('#id_organism').val();
-        var cancer = $('#id_cancer').val();
-        var threshold = $('#id_threshold').val();
-        var email = $('#id_email').val();
-        var modification = $('#id_modification').val();
         $.ajax({
-            method: "post",
-            url: "/test/elm_res/",
-            processData: false,
-            data: {"modification": modification, "organism": organism,
-                   "cancer": cancer, "threshold": threshold, "email": email
+            type: "post",
+            url: "/check_log/log_res/",
+            dataType: "json",
+            data: {"username": username},
+            async: false,
+            success: function (ret) {
+                console.log(ret.log_result);
+                console.log("日志查询成功");
             },
-            async: true,
-            complete: function () {
-                console.log("wancheng")
-            },
-            error: function (r1) {
-                console.log("calculation的ajax请求失败");
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus)
             }
         });
     }

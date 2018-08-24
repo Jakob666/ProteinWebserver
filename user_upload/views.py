@@ -14,6 +14,8 @@ import logging
 import logging.config
 import logging.handlers
 import yaml
+import threading
+from log_checker.views import check_logs
 
 
 # Create your views here.
@@ -224,7 +226,9 @@ def user_upload(request):
     u.upload_success = 1
     u.save()
     logger.debug("successfully upload.")
-    test_result_elm2(request)
+    # 开启另一个子线程完成分析工作
+    t = ThreadAnalysis(func=test_result_elm2, args=request)
+    t.start()
     return response
 
 
@@ -255,7 +259,20 @@ def setup_logging(user_dir, default_config):
     with open(default_config, "r", encoding="utf-8") as f:
         config = yaml.load(f)
         log_file = os.path.join(user_dir, "upload.log")
+        with open(log_file, "w") as f:
+            f.write("")
         config["handlers"]["upload_file_handler"]["filename"] = log_file
         logging.config.dictConfig(config)
     logger = logging.getLogger("uploadProcess")
     return logger
+
+
+# 定制一个线程类，使得分析用户上传文件的任务能够在另一个线程中执行，主线程可以不等待其执行完
+class ThreadAnalysis(threading.Thread):
+    def __init__(self, func, args):
+        super(ThreadAnalysis, self).__init__()
+        self.func = func
+        self.args = args
+
+    def run(self):
+        self.func(self.args)

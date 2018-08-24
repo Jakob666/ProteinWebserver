@@ -68,8 +68,6 @@ def test_result_elm2(request):
     has_elm, has_vcf, has_tab = None, None, None
     try:
         has_elm, has_vcf, has_tab = judge_from_upload_log(upload_log)
-        with open(upload_log, "w") as log:
-            log.write("")
     except RuntimeError:
         exit()
 
@@ -141,8 +139,9 @@ def test_result_elm2(request):
 
         with open(os.path.join(user_dir, latest_upload, "res.json"), "w") as f:
             json.dump(result, f, indent=4)
+    logger.debug("analysis complete.")
 
-        return None
+    return None
 
 
 def annotate_for_vcf_and_tab(user_dir, latest_upload, logger, vcf_file=None, tab_file=None):
