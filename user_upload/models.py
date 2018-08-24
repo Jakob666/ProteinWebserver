@@ -16,9 +16,6 @@ class UserFile(models.Model):
     # 一个时间值，用于后续定期删除工作
     visit_time = models.BigIntegerField(default=time.time())
 
-    # 是否上传成功，成功是1，反之为0
-    upload_success = models.IntegerField(default=0)
-
     class Meta:
         db_table = "user_record"
 

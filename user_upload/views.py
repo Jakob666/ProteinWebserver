@@ -57,8 +57,8 @@ def user_upload(request):
     os.makedirs(upload_path)
 
 # -----------------------将用户的提交记录存储到数据库中，同时在用户目录下生成日志文件 -------------------------------------------
-    # 同时在数据库中生成对应的UserFile记录，暂时设置upload_success为0（默认不成功）
-    uf = UserFile(username=uid, upload_time=cur_time, user_dir=upload_path, upload_success=0)
+    # 同时在数据库中生成对应的UserFile记录
+    uf = UserFile(username=uid, upload_time=cur_time, user_dir=upload_path)
     uf.save()
     # 获取日志对象，获取的同时用户目录中出现日志文件，名为 upload.log
     user_dir = os.path.join(user_files, uid)
@@ -79,6 +79,7 @@ def user_upload(request):
 #             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
 #             os.rmdir(upload_path)
 #             logger.error("Invaild text input. Fail to upload.")
+#             delete_user_record(upload_path)
 #             return response
 
 # ---------------------对用户提交的文件进行处理-----------------------------------------------
@@ -98,6 +99,7 @@ def user_upload(request):
             logging.error("resubmit elm file, already upload it from textarea. Fail to upload.")
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
             shutil.rmtree(upload_path)
+            delete_user_record(upload_path)
             return response
         suffix = elm_file.name.split(".")[-1]
         if not suffix.lower() == "elm":
@@ -109,6 +111,7 @@ def user_upload(request):
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
             logging.error("Invalid elm file suffix. Fail to upload.")
             shutil.rmtree(upload_path)
+            delete_user_record(upload_path)
             return response
         target_file = os.path.join(upload_path, "user.elm")
         save_user_file(elm_file, target_file)
@@ -124,6 +127,7 @@ def user_upload(request):
                                        "file_upload_error": file_upload_error})
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
             logging.error("resubmit vcf file, already upload it from textarea. Fail to upload.")
+            delete_user_record(upload_path)
             shutil.rmtree(upload_path)
             return response
         suffix = vcf_file.name.split(".")[-1]
@@ -135,6 +139,7 @@ def user_upload(request):
                                        "file_upload_error": file_upload_error})
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
             logging.error("Invalid vcf file suffix. Fail to upload.")
+            delete_user_record(upload_path)
             shutil.rmtree(upload_path)
             return response
         target_file = os.path.join(upload_path, "user.vcf")
@@ -151,6 +156,7 @@ def user_upload(request):
                                        "file_upload_error": file_upload_error})
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
             logging.error("resubmit tab file, already upload it from textarea. Fail to upload.")
+            delete_user_record(upload_path)
             shutil.rmtree(upload_path)
             return response
         suffix = tab_file.name.split(".")[-1]
@@ -162,6 +168,7 @@ def user_upload(request):
                                        "file_upload_error": file_upload_error})
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
             logging.error("Invalid tab file suffix. Fail to upload.")
+            delete_user_record(upload_path)
             shutil.rmtree(upload_path)
             return response
         target_file = os.path.join(upload_path, "user.tab")
@@ -178,6 +185,7 @@ def user_upload(request):
                           context={"form": UploadForm(), "file_upload_rule": file_upload_rule,
                                    "file_upload_error": file_upload_error})
         logger.error("The specification requirement for file uploading have not been met. Fail to upload.")
+        delete_user_record(upload_path)
         shutil.rmtree(upload_path)
         return response
 
@@ -217,15 +225,14 @@ def user_upload(request):
         response = render(request=request, template_name="user_upload/upload.html",
                           context={"form": UploadForm(), "file_upload_rule": file_upload_rule})
         logger.error("not keep the file upload rule. Fail to upload.")
+        delete_user_record(upload_path)
         shutil.rmtree(upload_path)
         return response
     # 对COOKIE信息进行更新，返回的response是一个HttpResponse类
     response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
     u = UserFile.objects.get(user_dir=upload_path)
-    u.upload_success = 1
     u.save()
     logger.debug("successfully upload.")
-    logging.shutdown()
     # 开启另一个子线程完成分析工作
     t = ThreadAnalysis(func=test_result_elm2, args=request)
     t.start()
@@ -276,3 +283,13 @@ class ThreadAnalysis(threading.Thread):
 
     def run(self):
         self.func(self.args)
+
+
+def delete_user_record(upload_dir):
+    """
+    当用户上传数据失败的时候删除该条上传记录
+    :param upload_dir: 本次上传的路径
+    :return:
+    """
+    u = UserFile.objects.get(user_dir=upload_dir)
+    u.delete()
