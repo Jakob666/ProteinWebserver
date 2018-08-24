@@ -140,6 +140,7 @@ def test_result_elm2(request):
         with open(os.path.join(user_dir, latest_upload, "res.json"), "w") as f:
             json.dump(result, f, indent=4)
     logger.debug("analysis complete.")
+    logging.shutdown()
 
     return None
 

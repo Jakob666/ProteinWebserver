@@ -132,8 +132,14 @@
         set:function (newValue) {
             if_upload = newValue;
             console.log("set:", newValue);
-            if (newValue)
-                readLog();
+            if (newValue){
+                var has_res = readLog();
+                if (has_res){
+                    console.log("有结果");
+                }else{
+                    console.log("没有结果");
+                }
+            }
         }
     });
 
@@ -171,7 +177,7 @@
             },
             error:function (r1) {
                 // 请求失败，if_upload变量的值为false
-{#                obj.if_upload = false;#}
+                obj.if_upload = false;
             }
         });
     }
@@ -189,7 +195,7 @@
                 console.log(username);
             }
         }
-
+        var has_result = null;
         $.ajax({
             type: "post",
             url: "/check_log/log_res/",
@@ -197,15 +203,18 @@
             data: {"username": username},
             async: false,
             success: function (ret) {
-                console.log(ret.log_result);
+                has_result = ret.log_result;
                 console.log("日志查询成功");
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(XMLHttpRequest.status);
                 console.log(XMLHttpRequest.readyState);
-                console.log(textStatus)
+                console.log(textStatus);
+                console.log("日志查询失败");
+                has_result = false;
             }
         });
+        return has_result;
     }
 
 

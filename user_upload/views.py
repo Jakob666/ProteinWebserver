@@ -15,7 +15,6 @@ import logging.config
 import logging.handlers
 import yaml
 import threading
-from log_checker.views import check_logs
 
 
 # Create your views here.
@@ -93,10 +92,10 @@ def user_upload(request):
         # 如果之前用户已经在textarea中提交了elm文件，同时也上传了elm文件，此时报错，提醒用户一个文件只能交一次
         if has_elm:
             response = render(request=request, template_name="user_upload/upload.html",
-                              context={"form": form, "file_upload_rule": file_upload_rule,
+                              context={"form": UploadForm(), "file_upload_rule": file_upload_rule,
                                        "elm_file.error": "you have already upload elm data in textarea",
                                        "file_upload_error": file_upload_error})
-            logger.error("resubmit elm file, already upload it from textarea. Fail to upload.")
+            logging.error("resubmit elm file, already upload it from textarea. Fail to upload.")
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
             shutil.rmtree(upload_path)
             return response
@@ -104,11 +103,11 @@ def user_upload(request):
         if not suffix.lower() == "elm":
             # 在浏览器上显示文件后缀名不符合要求
             response = render(request=request, template_name="user_upload/upload.html",
-                              context={"form": form, "file_upload_rule": file_upload_rule,
+                              context={"form": UploadForm(), "file_upload_rule": file_upload_rule,
                                        "elm_file_error": "invalid file's suffix",
                                        "file_upload_error": file_upload_error})
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
-            logger.error("Invalid elm file suffix. Fail to upload.")
+            logging.error("Invalid elm file suffix. Fail to upload.")
             shutil.rmtree(upload_path)
             return response
         target_file = os.path.join(upload_path, "user.elm")
@@ -120,22 +119,22 @@ def user_upload(request):
         # 如果之前用户已经在textarea中提交了vcf文件，同时也上传了vcf文件，此时报错，提醒用户一个文件只能交一次
         if has_vcf:
             response = render(request=request, template_name="user_upload/upload.html",
-                              context={"form": form, "file_upload_rule": file_upload_rule,
+                              context={"form": UploadForm(), "file_upload_rule": file_upload_rule,
                                        "vcf_file_error": "you have already upload vcf data in textarea",
                                        "file_upload_error": file_upload_error})
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
-            logger.error("resubmit vcf file, already upload it from textarea. Fail to upload.")
+            logging.error("resubmit vcf file, already upload it from textarea. Fail to upload.")
             shutil.rmtree(upload_path)
             return response
         suffix = vcf_file.name.split(".")[-1]
         if not suffix.lower() == "vcf":
             # 在浏览器上显示文件后缀名不符合要求
             response = render(request=request, template_name="user_upload/upload.html",
-                              context={"form": form, "file_upload_rule": file_upload_rule,
+                              context={"form": UploadForm(), "file_upload_rule": file_upload_rule,
                                        "vcf_file_error": "invalid file's suffix",
                                        "file_upload_error": file_upload_error})
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
-            logger.error("Invalid vcf file suffix. Fail to upload.")
+            logging.error("Invalid vcf file suffix. Fail to upload.")
             shutil.rmtree(upload_path)
             return response
         target_file = os.path.join(upload_path, "user.vcf")
@@ -147,22 +146,22 @@ def user_upload(request):
         # 如果之前用户已经在textarea中提交了tab文件，同时也上传了tab文件，此时报错，提醒用户一个文件只能交一次
         if has_tab:
             response = render(request=request, template_name="user_upload/upload.html",
-                              context={"form": form, "file_upload_rule": file_upload_rule,
+                              context={"form": UploadForm(), "file_upload_rule": file_upload_rule,
                                        "tab_file.error": "you have already upload tab data in textarea",
                                        "file_upload_error": file_upload_error})
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
-            logger.error("resubmit tab file, already upload it from textarea. Fail to upload.")
+            logging.error("resubmit tab file, already upload it from textarea. Fail to upload.")
             shutil.rmtree(upload_path)
             return response
         suffix = tab_file.name.split(".")[-1]
         if not suffix.lower() == "tab":
             # 在浏览器上显示文件后缀名不符合要求
             response = render(request=request, template_name="user_upload/upload.html",
-                              context={"form": form, "file_upload_rule": file_upload_rule,
+                              context={"form": UploadForm(), "file_upload_rule": file_upload_rule,
                                        "tab_file_error": "invalid file's suffix",
                                        "file_upload_error": file_upload_error})
             response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
-            logger.error("Invalid tab file suffix. Fail to upload.")
+            logging.error("Invalid tab file suffix. Fail to upload.")
             shutil.rmtree(upload_path)
             return response
         target_file = os.path.join(upload_path, "user.tab")
@@ -226,6 +225,7 @@ def user_upload(request):
     u.upload_success = 1
     u.save()
     logger.debug("successfully upload.")
+    logging.shutdown()
     # 开启另一个子线程完成分析工作
     t = ThreadAnalysis(func=test_result_elm2, args=request)
     t.start()
@@ -254,13 +254,13 @@ def setup_logging(user_dir, default_config):
     :param default_config: 默认的日志配置文件。
     :return:
     """
+    log_file = os.path.join(user_dir, "upload.log")
+    with open(log_file, "w") as f:
+        f.write("")
     local_dir = os.path.dirname(os.path.realpath(__file__))
     default_config = os.path.join(local_dir, default_config)
     with open(default_config, "r", encoding="utf-8") as f:
         config = yaml.load(f)
-        log_file = os.path.join(user_dir, "upload.log")
-        with open(log_file, "w") as f:
-            f.write("")
         config["handlers"]["upload_file_handler"]["filename"] = log_file
         logging.config.dictConfig(config)
     logger = logging.getLogger("uploadProcess")
