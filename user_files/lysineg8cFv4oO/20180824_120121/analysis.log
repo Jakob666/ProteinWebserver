@@ -1,8 +1,0 @@
-2018-08-24 20:01:22,004 - analysisProcess - test_result_elm2 - DEBUG : True
-2018-08-24 20:01:22,004 - analysisProcess - test_result_elm2 - DEBUG : False
-2018-08-24 20:01:22,004 - analysisProcess - test_result_elm2 - DEBUG : False
-2018-08-24 20:01:22,004 - analysisProcess - test_result_elm2 - DEBUG : Acethylation
-2018-08-24 20:01:22,004 - analysisProcess - test_result_elm2 - DEBUG : human
-2018-08-24 20:01:22,005 - analysisProcess - test_result_elm2 - DEBUG : BRCA
-2018-08-24 20:01:22,005 - analysisProcess - test_result_elm2 - DEBUG : only analysis elm file
-2018-08-24 20:01:27,411 - analysisProcess - test_result_elm2 - DEBUG : analysis complete.

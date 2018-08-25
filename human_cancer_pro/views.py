@@ -243,6 +243,7 @@ def testing(user_dir, latest_upload, logger, organism, elm_file=None, vcf_file=N
         Mail2Admin.send_mail()
     if not res:
         logger.error("analysis interrupted, failed")
+        exit()
     tsv_file = os.path.join(user_dir, latest_upload, "vcf_annotated.tsv")
     if organism == "human":
         for c in cancer:

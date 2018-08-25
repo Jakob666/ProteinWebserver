@@ -40,5 +40,5 @@ log_file_config = "logging.conf.yaml"
 # 给管理员发送文件的邮件配置信息
 send_to_admin = {
     "from_addr": "admin@renlab.org", "password": "renlab#322",  "smtp_server": "server.targetgene.com",
-    "admin_addr": "826850754@qq.com"
+    "admin_addr": ["826850754@qq.com"]
 }

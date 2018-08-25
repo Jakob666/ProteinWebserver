@@ -7,6 +7,8 @@ description:
     发送邮件。
 """
 import smtplib
+from email.mime.text import MIMEText
+import time
 import os
 from .CONFIG import send_to_admin
 
@@ -21,18 +23,11 @@ class Mail2Admin:
         """
         log_file = os.path.join(upload_dir, "analysis.log")
         annovar_error = False
-        while True:
-            if not os.path.exists(log_file):
-                continue
-            f = open(log_file, "r")
-            content = f.read()
-            f.close()
-            if "annovar error." in content:
-                annovar_error = True
-                break
-            elif "annovar annotate, done" in content:
-                break
-            continue
+        f = open(log_file, "r")
+        content = f.read()
+        f.close()
+        if "annovar error." in content:
+            annovar_error = True
         return annovar_error
 
     @staticmethod
@@ -46,14 +41,23 @@ class Mail2Admin:
         password = send_to_admin["password"]
         to_addr = send_to_admin["admin_addr"]
 
-        msg = "服务器上Lysine webserver使用的annovar软件出现问题，请及时解决"
+        # 定义文本信息
+        mail_body = "服务器上Lysine webserver使用的annovar软件出现问题，请及时解决"
+        msg = MIMEText(mail_body)
+        # 定义邮件标题
+        msg["Subject"] = "webserver服务异常"
+        msg["From"] = from_addr
+        msg["To"] = ";".join(send_to_admin["admin_addr"])
+        msg["date"] = time.strftime("%a, %d %b %Y %H: %M: %S %z")
+        server = smtplib.SMTP()
+        server.connect(smtp_server)
         try:
-            server = smtplib.SMTP(smtp_server, 25)
-            server.set_debuglevel(1)
             server.login(from_addr, password)
-            server.sendmail(from_addr, [to_addr], msg)
-            server.quit()
+            server.sendmail(from_addr, to_addr, msg.as_string())
+
         except smtplib.SMTPException:
             print("Error:Can not send E-mail")
             exit()
+        finally:
+            server.quit()
         return None
