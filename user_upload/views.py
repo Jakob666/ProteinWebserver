@@ -233,6 +233,7 @@ def user_upload(request):
     u = UserFile.objects.get(user_dir=upload_path)
     u.save()
     logging.debug("successfully upload.")
+    logging.shutdown()
     # 开启另一个子线程完成分析工作
     t = ThreadAnalysis(func=test_result_elm2, args=request)
     t.start()

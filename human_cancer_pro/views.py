@@ -173,18 +173,21 @@ def annotate_for_vcf_and_tab(user_dir, latest_upload, logger, vcf_file=None, tab
         logger.debug("annovar annotate, done")
     except RuntimeError:
         logger.error("annovar error.")
+        logger.error("analysis interrupted")
         return False
     # 如果没出问题则继续对annovar注释文件进行提取，annovar_res是list形式
     annovar_res = AnnovarAnnotate.variant_process(user_dir=target_dir)
     # 如果返回的结果list为空，说明vcf记录的突变中不存在非同义突变
     if not annovar_res:
         logger.error("contains no nonsynonymous variant.")
+        logger.error("analysis interrupted")
         return False
     # 注释文件中是refseq号，需要匹配其Uniprot号。如果比对的结果为空，会报出RuntimeError
     try:
         AnnovarAnnotate.match2uniport(annovar_res, user_dir=target_dir)
     except RuntimeError:
         logger.error("can't match refseq to uniprot.")
+        logger.error("analysis interrupted")
         return False
     return True
 
@@ -243,7 +246,6 @@ def testing(user_dir, latest_upload, logger, organism, elm_file=None, vcf_file=N
         Mail2Admin.send_mail()
     if not res:
         print("分析确实出毛病啦")
-        logging.error("analysis interrupted, failed")
         exit()
     tsv_file = os.path.join(user_dir, latest_upload, "vcf_annotated.tsv")
     if organism == "human":
