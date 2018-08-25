@@ -242,7 +242,8 @@ def testing(user_dir, latest_upload, logger, organism, elm_file=None, vcf_file=N
     if alert:
         Mail2Admin.send_mail()
     if not res:
-        logger.error("analysis interrupted, failed")
+        print("分析确实出毛病啦")
+        logging.error("analysis interrupted, failed")
         exit()
     tsv_file = os.path.join(user_dir, latest_upload, "vcf_annotated.tsv")
     if organism == "human":

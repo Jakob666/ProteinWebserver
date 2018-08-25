@@ -20,11 +20,15 @@ class UploadLogChecker:
                     content = f.read()
             if "Fail to upload." in content:
                 self.check_res = False
+                print("我知道上传出错了")
                 break
             elif "successfully upload." in content:
                 self.check_res = True
+                print("我知道上传成功了")
                 break
             else:
                 time.sleep(1)
                 continue
+        with open(self.upload_log, "w") as f:
+            f.write("")
 

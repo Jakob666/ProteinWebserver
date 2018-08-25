@@ -115,7 +115,7 @@ def user_upload(request):
             return response
         target_file = os.path.join(upload_path, "user.elm")
         save_user_file(elm_file, target_file)
-        logger.debug("elm file upload completed.")
+        logging.debug("elm file upload completed.")
         has_elm = True
 
     if vcf_file:
@@ -144,7 +144,7 @@ def user_upload(request):
             return response
         target_file = os.path.join(upload_path, "user.vcf")
         save_user_file(vcf_file, target_file)
-        logger.debug("vcf file upload completed.")
+        logging.debug("vcf file upload completed.")
         has_vcf = True
 
     if tab_file:
@@ -173,7 +173,7 @@ def user_upload(request):
             return response
         target_file = os.path.join(upload_path, "user.tab")
         save_user_file(tab_file, target_file)
-        logger.debug("tab file upload completed.")
+        logging.debug("tab file upload completed.")
         has_tab = True
 
     # 对用户上传的文件处理完成后检查用户提交的信息是否满足进行显著蛋白鉴定的条件
@@ -224,7 +224,7 @@ def user_upload(request):
     else:
         response = render(request=request, template_name="user_upload/upload.html",
                           context={"form": UploadForm(), "file_upload_rule": file_upload_rule})
-        logger.error("not keep the file upload rule. Fail to upload.")
+        logging.error("not keep the file upload rule. Fail to upload.")
         delete_user_record(upload_path)
         shutil.rmtree(upload_path)
         return response
@@ -232,7 +232,7 @@ def user_upload(request):
     response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
     u = UserFile.objects.get(user_dir=upload_path)
     u.save()
-    logger.debug("successfully upload.")
+    logging.debug("successfully upload.")
     # 开启另一个子线程完成分析工作
     t = ThreadAnalysis(func=test_result_elm2, args=request)
     t.start()
