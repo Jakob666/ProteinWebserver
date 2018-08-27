@@ -2,7 +2,6 @@
 import os
 import time
 from .CONFIG import users_dir
-import logging
 
 
 class AnalysisLogChecker:
@@ -13,7 +12,6 @@ class AnalysisLogChecker:
         latest_upload = files[mtimes.index(max(mtimes))]
 
         self.analysis_log = os.path.join(users_dir, username, latest_upload, "analysis.log")
-        self.check_res = None
 
     def check_log(self):
         while True:
@@ -24,12 +22,13 @@ class AnalysisLogChecker:
                 with open(self.analysis_log, "r") as f:
                     content = f.read()
             if "analysis interrupted" in content:
-                self.check_res = False
+                check_res = False
                 break
             elif "analysis complete." in content:
-                self.check_res = True
+                check_res = True
                 break
             else:
                 time.sleep(1)
                 continue
+        return check_res
 

@@ -56,7 +56,6 @@ class Mail2Admin:
 
         except smtplib.SMTPException:
             print("Error:Can not send E-mail")
-            exit()
         finally:
             server.quit()
         return None

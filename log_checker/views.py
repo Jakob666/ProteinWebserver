@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 import json
 from .upload_log_checker import UploadLogChecker
@@ -13,6 +12,5 @@ def check_logs(request):
     if not check_res:
         return HttpResponse(json.dumps({"log_result": check_res}, ensure_ascii=False))
     analysis_handler = AnalysisLogChecker(username=username)
-    analysis_handler.check_log()
-    if analysis_handler.check_res:
-        return HttpResponse(json.dumps({"log_result": analysis_handler.check_res}, ensure_ascii=False))
+    check_res = analysis_handler.check_log()
+    return HttpResponse(json.dumps({"log_result": check_res}, ensure_ascii=False))
