@@ -16,11 +16,13 @@ class Send2User:
         from_addr = server_info["from_addr"]
         password = server_info["password"]
         to_addr = user_email
+        msg = None
 
         server = smtplib.SMTP()
         server.connect(smtp_server)
         try:
             server.login(from_addr, password)
+            server.sendmail(from_addr, to_addr, msg)
         except smtplib.SMTPException:
             print("无法发送邮件到用户")
         finally:

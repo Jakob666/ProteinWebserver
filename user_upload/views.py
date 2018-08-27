@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
-from django.http import HttpResponse
 from .CONFIG import user_files, log_default_config
 import os
 import shutil
@@ -10,6 +9,7 @@ from django.utils import timezone
 from .cookies import Cookies
 # from .check_format import FormatChecker
 from human_cancer_pro.views import test_result_elm2
+from user_history.history_result import HistoryResult
 import logging
 import logging.config
 import logging.handlers
@@ -29,9 +29,11 @@ def user_upload(request):
     # 用于告知用户如何正确上传文件
     file_upload_rule = "为确保正常执行服务器预测功能，请按照如下任意形式上传文件:\n(1) 上传单独的一份elm格式文件。\n" \
                        "(2) 上传一份elm和一份vcf格式文件。\n(3) 上传一份elm和一份tab格式文件\n(4) 上传单独的vcf或tab格式文件并选取修饰类型。"
+    history_record = HistoryResult.get_task_status(request)
     if request.method == "GET":
         obj = UploadForm()
-        response = render(request, "user_upload/upload.html", {"form": obj, "file_upload_rule": file_upload_rule})
+        response = render(request, "user_upload/upload.html", {"form": obj, "file_upload_rule": file_upload_rule,
+                                                               "user_history": history_record})
         return response
 
     # 设定上标记，查看是否有三类文件

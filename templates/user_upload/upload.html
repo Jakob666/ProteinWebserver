@@ -91,8 +91,19 @@
     </div>
     <br />
     <br />
-    <table {% if cnm %} {% endif %}>
-        <tr>{{ cnm }}</tr>
+    <table border="1" {% if user_history %}{% endif %}>
+        <tr>
+            <th>upload time</th>
+            <th>task status</th>
+            <th>detail</th>
+        </tr>
+        {% for k, v in user_history.items %}
+        <tr>
+            <td>{{ k }}</td>
+            <td>{{ v }}</td>
+            <td><input type="button" value="details" /></td>
+        </tr>
+        {% endfor %}
     </table>
 </body>
 <script type="text/javascript">
