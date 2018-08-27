@@ -25,11 +25,9 @@ class AnalysisLogChecker:
                     content = f.read()
             if "analysis interrupted" in content:
                 self.check_res = False
-                print("我知道分析失败了")
                 break
             elif "analysis complete." in content:
                 self.check_res = True
-                print("我知道分析成功了")
                 break
             else:
                 time.sleep(1)

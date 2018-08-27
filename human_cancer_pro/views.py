@@ -7,7 +7,7 @@ from .test_for_vcf.annovar_annotate import AnnovarAnnotate
 from .test_for_vcf.get_mutation_vcf import GetMutationVCF
 from .test_for_tab.tab2avinput import Tab2Avinput
 from user_upload.CONFIG import user_files
-from .CONFIG import log_file_config
+from .CONFIG import log_file_config, send_to_admin
 from .mail2admin import Mail2Admin
 import os
 import numpy as np
@@ -79,49 +79,49 @@ def test_result_elm2(request):
 
     # 进行分析工作之前先创建日志对象
     logger = setup_logging(os.path.join(user_dir, latest_upload), default_config=log_file_config)
-    logger.debug(has_elm)
-    logger.debug(has_vcf)
-    logger.debug(has_tab)
+    logging.debug(has_elm)
+    logging.debug(has_vcf)
+    logging.debug(has_tab)
 
     # 获取POST方式提交的数据，其中modification是list形式， organism是字符串形式， threshold是字符串形式， cancer是list形式
     modification = request.POST.getlist("modification")
-    logger.debug("\t".join(modification))
+    logging.debug("\t".join(modification))
     organism = request.POST["organism"]
-    logger.debug(organism)
+    logging.debug(organism)
     threshold = request.POST["threshold"]
     cancer = request.POST.getlist("cancer")
-    logger.debug("\t".join(cancer))
+    logging.debug("\t".join(cancer))
     email = request.POST["email"]
     elm_file = os.path.join(user_dir, latest_upload, "user.elm")
     vcf_file = os.path.join(user_dir, latest_upload, "user.vcf")
     tab_file = os.path.join(user_dir, latest_upload, "user.tab")
     # （1）同时上传elm和vcf文件
     if has_elm and has_vcf:
-        logger.debug("analysis elm and vcf file")
+        logging.debug("analysis elm and vcf file")
         testing(user_dir=user_dir, latest_upload=latest_upload, logger=logger, organism=organism, elm_file=elm_file,
                 vcf_file=vcf_file, cancer=cancer)
 
     # （2）同时上传elm和tab文件
     elif has_elm and has_tab:
-        logger.debug("analysis elm and tab file")
+        logging.debug("analysis elm and tab file")
         testing(user_dir=user_dir, latest_upload=latest_upload, logger=logger, organism=organism, elm_file=elm_file,
                 tab_file=tab_file, cancer=cancer)
 
     # （3）仅上传vcf文件，同时点选modification选项
     elif has_vcf and modification:
-        logger.debug("analysis vcf file and ticjed modifications")
+        logging.debug("analysis vcf file and ticjed modifications")
         testing(user_dir=user_dir, latest_upload=latest_upload, logger=logger, organism=organism, vcf_file=vcf_file,
                 modification=modification, cancer=cancer)
 
     # （4）仅上传tab文件，同时点选modification选项
     elif has_tab and modification:
-        logger.debug("analysis tab file and ticjed modifications")
+        logging.debug("analysis tab file and ticjed modifications")
         testing(user_dir=user_dir, latest_upload=latest_upload, logger=logger, organism=organism, tab_file=tab_file,
                 modification=modification, cancer=cancer)
 
     # （5）仅上传elm文件
     elif has_elm:
-        logger.debug("only analysis elm file")
+        logging.debug("only analysis elm file")
         g = GetMutationInfo()
         result = {}
         if organism == "human":
@@ -139,7 +139,7 @@ def test_result_elm2(request):
 
         with open(os.path.join(user_dir, latest_upload, "res.json"), "w") as f:
             json.dump(result, f, indent=4)
-    logger.debug("analysis complete.")
+    logging.debug("analysis complete.")
     logging.shutdown()
 
     return None
@@ -161,33 +161,34 @@ def annotate_for_vcf_and_tab(user_dir, latest_upload, logger, vcf_file=None, tab
         # 通过Vcf2Avinput对象对vcf文件格式进行转换，形成annovar需要的avinput文件
         v2a = Vcf2Avinput(vcf_file=vcf_file, avin_file=avinput_file)
         v2a.vcf2avin()
-        logger.debug("vcf to avinput, done")
+        logging.debug("vcf to avinput, done")
     if tab_file:
         # 通过Tab2Avinput对象对tab文件格式进行转换，形成annovar需要的avinput文件
         t2a = Tab2Avinput(tab_file=tab_file, avin_file=avinput_file)
         t2a.tab2avin()
-        logger.debug("tab to avinput, done")
+        logging.debug("tab to avinput, done")
     # AnnovarAnnotate类对象对avinput文件进行注释，如果annovar注释失败（可能是本地的annovar软件出问题了），会报出RuntimeError
     try:
         AnnovarAnnotate.annotate(user_dir=target_dir,  avinput_file=avinput_file)
-        logger.debug("annovar annotate, done")
+        logging.debug("annovar annotate, done")
     except RuntimeError:
-        logger.error("annovar error.")
-        logger.error("analysis interrupted")
+        logging.error("annovar error.")
+        Mail2Admin.send_mail(send_to_admin)
+        logging.error("analysis interrupted")
         return False
     # 如果没出问题则继续对annovar注释文件进行提取，annovar_res是list形式
     annovar_res = AnnovarAnnotate.variant_process(user_dir=target_dir)
     # 如果返回的结果list为空，说明vcf记录的突变中不存在非同义突变
     if not annovar_res:
-        logger.error("contains no nonsynonymous variant.")
-        logger.error("analysis interrupted")
+        logging.error("contains no nonsynonymous variant.")
+        logging.error("analysis interrupted")
         return False
     # 注释文件中是refseq号，需要匹配其Uniprot号。如果比对的结果为空，会报出RuntimeError
     try:
         AnnovarAnnotate.match2uniport(annovar_res, user_dir=target_dir)
     except RuntimeError:
-        logger.error("can't match refseq to uniprot.")
-        logger.error("analysis interrupted")
+        logging.error("can't match refseq to uniprot.")
+        logging.error("analysis interrupted")
         return False
     return True
 
@@ -241,11 +242,7 @@ def testing(user_dir, latest_upload, logger, organism, elm_file=None, vcf_file=N
     """
     # 首先需要对tab文件进行处理，生成avinput文件后对其进行annovar注释。Mail2Admin是监测服务器的annovar软件是否出问题，出错会给管理发邮件
     res = annotate_for_vcf_and_tab(user_dir, latest_upload, logger, vcf_file, tab_file)
-    alert = Mail2Admin.read_logging(os.path.join(user_dir, latest_upload))
-    if alert:
-        Mail2Admin.send_mail()
     if not res:
-        print("分析确实出毛病啦")
         exit()
     tsv_file = os.path.join(user_dir, latest_upload, "vcf_annotated.tsv")
     if organism == "human":
@@ -253,7 +250,7 @@ def testing(user_dir, latest_upload, logger, organism, elm_file=None, vcf_file=N
             tsv_test_res(tsv_file, ticked_modify=modification, elm_file=elm_file, cancer=c)
     else:
         tsv_test_res(tsv_file, ticked_modify=modification, elm_file=elm_file, cancer=None)
-    logger.debug("analysis complete.")
+    logging.debug("analysis complete.")
 
 
 def get_mutate_vcf(request):

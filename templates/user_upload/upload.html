@@ -22,6 +22,7 @@
         <input id="elm_example" type="button" value="elm exmple" />
         <input id="vcf_example" type="button" value="vcf exmple" />
         <input id="tab_example" type="button" value="tab exmple" />
+        <input id="clear_all" type="button" value="clear" />
         <div>
             {{ file_upload_rule }}
         </div>
@@ -202,27 +203,30 @@
                 console.log("日志查询成功");
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(XMLHttpRequest.status);
-                console.log(XMLHttpRequest.readyState);
-                console.log(textStatus);
-                console.log("日志查询失败");
-                has_result = false;
+{#                console.log(XMLHttpRequest.status);#}
+{#                console.log(XMLHttpRequest.readyState);#}
+{#                console.log(textStatus);#}
+{#                console.log("日志查询失败");#}
+{#                has_result = false;#}
             }
         });
         return has_result;
     }
 
     $("#elm_example").click(function () {
-        $("#text_input").val("");
+        $("#id_input_text").val("");
         showExample($("#elm_example").val());
     });
     $("#vcf_example").click(function () {
-        $("#text_input").val("");
+        $("#id_input_text").val("");
         showExample($("#vcf_example").val())
     });
     $("#tab_example").click(function () {
-        $("#text_input").val("");
+        $("#id_input_text").val("");
         showExample($("#tab_example").val())
+    });
+    $("#clear_all").click(function () {
+        $("#id_input_text").val();
     });
 
     function showExample(exampleType) {

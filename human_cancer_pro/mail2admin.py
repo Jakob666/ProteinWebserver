@@ -10,7 +10,6 @@ import smtplib
 from email.mime.text import MIMEText
 import time
 import os
-from .CONFIG import send_to_admin
 
 
 class Mail2Admin:
@@ -31,7 +30,7 @@ class Mail2Admin:
         return annovar_error
 
     @staticmethod
-    def send_mail():
+    def send_mail(send_to_admin):
         """
         给管理员发邮件提示服务器的annovar注释软件有问题
         :return:
@@ -47,7 +46,7 @@ class Mail2Admin:
         # 定义邮件标题
         msg["Subject"] = "webserver服务异常"
         msg["From"] = from_addr
-        msg["To"] = ";".join(send_to_admin["admin_addr"])
+        msg["To"] = ";".join(to_addr)
         msg["date"] = time.strftime("%a, %d %b %Y %H: %M: %S %z")
         server = smtplib.SMTP()
         server.connect(smtp_server)

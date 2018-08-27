@@ -10,7 +10,7 @@ formatters:
 handlers:
   console:
     class: logging.StreamHandler
-    level: INFO
+    level: CRITICAL
     formatter: brief
     stream: ext://sys.stdout
   analysis_file_handler:
@@ -30,4 +30,4 @@ loggers:
 
 root:
   level: DEBUG
-  handlers: [console]
+  handlers: [console,analysis_file_handler]
