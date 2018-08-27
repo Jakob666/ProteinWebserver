@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from .test_for_elm.test_significant import SignificanceTest
 from .test_for_elm.get_mutation_info import GetMutationInfo
@@ -10,10 +9,7 @@ from user_upload.CONFIG import user_files
 from .CONFIG import log_file_config, send_to_admin
 from .mail2admin import Mail2Admin
 import os
-import numpy as np
-import pandas as pd
 import warnings
-from operator import itemgetter
 import logging
 import logging.config
 import logging.handlers
@@ -23,41 +19,6 @@ from collections import ChainMap
 
 
 # Create your views here.
-def get_mutate_elm(request):
-    """
-    调用test_for_elm中get_mutation_info的GetMutationInfo类从用户提交的elm文件获取突变信息
-    :param request:
-    :return:
-    """
-    warnings.filterwarnings("ignore")
-    g = GetMutationInfo()
-    area_len, motif_mut, background_mut = g.main("C:/Users/hbs/Desktop/lysine/test_user.elm", "BRCA")
-    res = np.array(background_mut).tolist()
-    string = ""
-    for i in res:
-        info = list(map(str, i))
-        info = "\t".join(info)
-        string += info + "\n"
-    return HttpResponse(string)
-
-
-def test_result_elm(request):
-    """
-    通过对用户提取的elm文件进行突变数据的提取，使用之前的算法检验用户提交的elm
-    蛋白是否是显著突变蛋白。
-    :param request:
-    :return:
-    """
-    warnings.filterwarnings("ignore")
-    g = GetMutationInfo()
-    area_len, motif_mut, background_mut = g.main("C:/Users/hbs/Desktop/lysine/test_user.elm", "BRCA")
-    s = SignificanceTest(motif_mut, background_mut, area_len)
-    s.get_result()
-    s.test_res.sort(key=itemgetter("p_value"))
-    res = "\n".join(["\t".join(list(map(str, i.values()))) for i in s.test_res])
-    return HttpResponse(res)
-
-
 def test_result_elm2(request):
     warnings.filterwarnings("ignore")
     # 通过cookie中cname（形式为lysine=XXX，其中XXX是uid），通过uid得到用户目录和日志文件
@@ -251,38 +212,6 @@ def testing(user_dir, latest_upload, logger, organism, elm_file=None, vcf_file=N
     else:
         tsv_test_res(tsv_file, ticked_modify=modification, elm_file=elm_file, cancer=None)
     logging.debug("analysis complete.")
-
-
-def get_mutate_vcf(request):
-    """
-    对用户提交的VCF文件进行处理，并从中提取出修饰区内外的突变位点
-    :param request:
-    :return:
-    """
-    warnings.filterwarnings("ignore")
-    mut_data, modify_position = GetMutationVCF.get_motif_range(
-        annotate_file="C:/Users/hbs/Desktop/lysine/vcf_annotated.tsv",
-        ticked_modify=["Acetylation", "Glycation"],
-        cancer_type="BRCA")
-
-    motif_area, area_len = GetMutationVCF.get_motif_area(modify_position)
-    motif_mut, background_mut = GetMutationVCF.mut_location(mut_data, motif_area)
-    # 找到修饰和背景域的交集，common的形式类似于 {('O14977', 'Acetylation'), ('Q9Y266', 'Glycation'), ……}
-    common = set(zip(motif_mut["Uniprot Accession"], motif_mut["Type"])) & set(
-        zip(background_mut["Uniprot Accession"], background_mut["Type"]))
-    test_result = []
-    for protein, modification in common:
-        in_motif_mut = motif_mut[motif_mut["Uniprot Accession"] == protein]
-        in_motif_mut = in_motif_mut[in_motif_mut["Type"] == modification]
-        in_background = background_mut[background_mut["Uniprot Accession"] == protein]
-        in_background = in_background[in_background["Type"] == modification]
-        motif = area_len[area_len["Uniprot Accession"] == protein]
-        motif = motif[motif["Type"] == modification]
-        s = SignificanceTest(in_motif_mut, in_background, motif)
-        s.get_result()
-        test_result.extend(s.test_res)
-    res = "\n".join(["\t".join(list(map(str, i.values()))) for i in test_result])
-    return HttpResponse(res)
 
 
 def setup_logging(user_dir, default_config):
