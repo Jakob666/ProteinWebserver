@@ -237,7 +237,7 @@
         showExample($("#tab_example").val())
     });
     $("#clear_all").click(function () {
-        $("#id_input_text").val();
+        $("#id_input_text").val("");
     });
 
     function showExample(exampleType) {
@@ -248,7 +248,6 @@
             asyns: false,
             success: function (ret) {
                 $("#id_input_text").val(ret);
-                console.log(ret);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(XMLHttpRequest.status);

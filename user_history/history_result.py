@@ -47,7 +47,7 @@ class HistoryResult:
     @staticmethod
     def judge_from_log_file(upload_dir):
         log_file = os.path.join(upload_dir, "analysis.log")
-        status = ""
+        status = "running"
         with open(log_file, "r") as f:
             content = f.read()
         # 正常情况下完成分析时的内容
