@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
 from .CONFIG import user_files, log_default_config
 import os
@@ -199,6 +201,18 @@ def user_upload(request):
         return response
 
     file_upload_success = "文件上传成功"
+    # 获取POST方式提交的数据，其中modification是list形式， organism是字符串形式， threshold是字符串形式， cancer是list形式
+    modification = request.POST.getlist("modification")
+    logging.debug("post_modification:%s", "\t".join(modification))
+    organism = request.POST["organism"]
+    logging.debug("post_organism:%s", organism)
+    threshold = request.POST["threshold"]
+    logging.debug("post_threshold:%s", threshold)
+    cancer = request.POST.getlist("cancer")
+    logging.debug("post_cancer:%s", "\t".join(cancer))
+    email = request.POST["email"]
+    logging.debug("post_email:%s", email)
+
     # 形式1：用户提交vcf文件、elm文件
     history_record = HistoryResult.get_task_status(request)
     if has_vcf and has_elm:
@@ -226,10 +240,8 @@ def user_upload(request):
                                    "file_upload_success": file_upload_success, "user_history": history_record})
     # 形式5：用户仅提交elm文件
     elif has_elm:
-        response = render(request=request, template_name="user_upload/upload.html",
-                          context={"form": UploadForm(), "file_upload_rule": file_upload_rule,
-                                   "upload_success": "上传成功，开始解析elm文件",
-                                   "file_upload_success": file_upload_success, "user_history": history_record})
+        response = HttpResponseRedirect(reverse("user_upload:showResult",
+                                                kwargs={"upload_time": cur_time.strftime("%Y%m%d_%H%M%S"), "uid": uid}))
     # 如果均不符合以上条件，则返回信息，告知用户至少需要提交哪些文件
     else:
         delete_user_record(upload_path)
@@ -242,14 +254,14 @@ def user_upload(request):
         response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
         return response
     # 对COOKIE信息进行更新，返回的response是一个HttpResponse类
-    response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
+    # response = Cookies.set_cookies(uid=uid, webserver_name=webserver_name, response=response)
     u = UserFile.objects.get(user_dir=upload_path)
     u.save()
     logging.debug("successfully upload.")
     logging.shutdown()
     # 开启另一个子线程完成分析工作
-    t = ThreadAnalysis(func=test_result_elm2, args=request)
-    t.start()
+    # t = ThreadAnalysis(func=test_result_elm2, args=request)
+    # t.start()
     return response
 
 
@@ -307,3 +319,20 @@ def delete_user_record(upload_dir):
     """
     u = UserFile.objects.get(user_dir=upload_dir)
     u.delete()
+
+
+def result(request, upload_time, uid):
+    """
+
+    :param request: 用户发来的请求
+    :param uid: 用户的uid
+    :param upload_time: 用户上传文件的时间
+    :return:
+    """
+    upload_time = upload_time.split("_")[0]
+    upload_time = ".".join([upload_time[:4], upload_time[4: 6], upload_time[6: 8]])
+    # 开启另一个子线程完成分析工作
+    t = ThreadAnalysis(func=test_result_elm2, args=request)
+    t.start()
+    return render(request, "user_upload/result.html", context={"user_name": uid, "submit_time": upload_time,
+                                                               "status": "running"})

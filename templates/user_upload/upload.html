@@ -147,13 +147,8 @@
         set:function (newValue) {
             if_upload = newValue;
             console.log("set:", newValue);
-            if (newValue){
-                var has_res = readLog();
-                if (has_res){
-                    console.log("有结果");
-                }else{
-                    console.log("没有结果");
-                }
+            if (!newValue){
+                console.log("上传失败，没跳转页面")
             }
         }
     });
@@ -190,39 +185,39 @@
     }
 
     // 定义一个读取日志的方法，对日志的内容进行获取并调整前端的显示
-    function readLog() {
-        var cook_info = document.cookie;
-        cook_info = cook_info.split(";");
-        var username;
-        // 首先从cookie中获取用户名
-        for (var i = 0; i < cook_info.length; i++) {
-            var info = cook_info[i].trim().split("=");
-            if (info[0] == "cname") {
-                username = info[2].split('"')[0];
-                console.log(username);
-            }
-        }
-        var has_result = null;
-        $.ajax({
-            type: "post",
-            url: "/check_log/log_res/",
-            dataType: "json",
-            data: {"username": username},
-            async: false,
-            success: function (ret) {
-                has_result = ret.log_result;
-                console.log("日志查询成功");
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
+{#    function readLog() {#}
+{#        var cook_info = document.cookie;#}
+{#        cook_info = cook_info.split(";");#}
+{#        var username;#}
+{#        // 首先从cookie中获取用户名#}
+{#        for (var i = 0; i < cook_info.length; i++) {#}
+{#            var info = cook_info[i].trim().split("=");#}
+{#            if (info[0] == "cname") {#}
+{#                username = info[2].split('"')[0];#}
+{#                console.log(username);#}
+{#            }#}
+{#        }#}
+{#        var has_result = null;#}
+{#        $.ajax({#}
+{#            type: "post",#}
+{#            url: "/check_log/log_res/",#}
+{#            dataType: "json",#}
+{#            data: {"username": username},#}
+{#            async: false,#}
+{#            success: function (ret) {#}
+{#                has_result = ret.log_result;#}
+{#                console.log("日志查询成功");#}
+{#            },#}
+{#            error: function (XMLHttpRequest, textStatus, errorThrown) {#}
 {#                console.log(XMLHttpRequest.status);#}
 {#                console.log(XMLHttpRequest.readyState);#}
 {#                console.log(textStatus);#}
 {#                console.log("日志查询失败");#}
 {#                has_result = false;#}
-            }
-        });
-        return has_result;
-    }
+{#            }#}
+{#        });#}
+{#        return has_result;#}
+{#    }#}
 
     $("#elm_example").click(function () {
         $("#id_input_text").val("");

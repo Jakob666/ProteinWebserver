@@ -8,6 +8,7 @@ from .test_for_tab.tab2avinput import Tab2Avinput
 from user_upload.CONFIG import user_files
 from .CONFIG import log_file_config, send_to_admin
 from .mail2admin import Mail2Admin
+import re
 import os
 import warnings
 import logging
@@ -28,7 +29,8 @@ def test_result_elm2(request):
     # 对用户目录的upload.log文件进行解读，如果之前用户上传失败就直接退出不进行后续分析
     has_elm, has_vcf, has_tab = None, None, None
     try:
-        has_elm, has_vcf, has_tab = judge_from_upload_log(upload_log)
+        user_post = judge_from_upload_log(upload_log)
+        has_elm, has_vcf, has_tab = user_post["has_elm"], user_post["has_vcf"], user_post["has_tab"]
     except RuntimeError:
         exit()
 
@@ -45,14 +47,16 @@ def test_result_elm2(request):
     logging.debug(has_tab)
 
     # 获取POST方式提交的数据，其中modification是list形式， organism是字符串形式， threshold是字符串形式， cancer是list形式
-    modification = request.POST.getlist("modification")
-    logging.debug("\t".join(modification))
-    organism = request.POST["organism"]
+    modification = user_post["modification"]
+    logging.debug(modification)
+    organism = user_post["organism"]
     logging.debug(organism)
-    threshold = request.POST["threshold"]
-    cancer = request.POST.getlist("cancer")
-    logging.debug("\t".join(cancer))
-    email = request.POST["email"]
+    threshold = user_post["threshold"]
+    logging.debug(threshold)
+    cancer = user_post["cancer"]
+    logging.debug(cancer)
+    email = user_post["email"]
+    logging.debug(email)
     elm_file = os.path.join(user_dir, latest_upload, "user.elm")
     vcf_file = os.path.join(user_dir, latest_upload, "user.vcf")
     tab_file = os.path.join(user_dir, latest_upload, "user.tab")
@@ -238,6 +242,11 @@ def judge_from_upload_log(upload_log):
     :param upload_log: 用户目录中upload目录upload.lg文件的路径
     :return:
     """
+    mod_pattern = re.compile("post_modification:(.*)")
+    org_pattern = re.compile("post_organism:([a-z]+)")
+    thre_pattern = re.compile(r"post_threshold:([a-z]+)")
+    can_pattern = re.compile("post_cancer:(.+)")
+    ema_pattern = re.compile("post_email:(.+)")
     has_elm, has_vcf, has_tab = False, False, False
     while True:
         # 如果用户目录的log日志不存在，可能是ajax没有异步完成，等待之后生成即可。如果存在log日志则读取其中的信息
@@ -262,5 +271,16 @@ def judge_from_upload_log(upload_log):
         has_vcf = True
     if "tab file upload completed." in log_content:
         has_tab = True
+    modification = re.findall(mod_pattern, log_content)[0]
+    organism = re.findall(org_pattern, log_content)[0]
+    threshold = re.findall(thre_pattern, log_content)[0]
+    cancer = re.findall(can_pattern, log_content)[0]
+    # 因为email不是所有用户都会上传，所以这里需要一个异常处理
+    try:
+        email = re.findall(ema_pattern, log_content)[0]
+    except IndexError:
+        email = None
+    user_post = {"has_elm": has_elm, "has_vcf": has_vcf, "has_tab": has_tab, "modification": modification,
+                 "organism": organism, "threshold": threshold, "cancer": cancer, "email": email}
 
-    return has_elm, has_vcf, has_tab
+    return user_post
