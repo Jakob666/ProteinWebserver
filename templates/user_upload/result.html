@@ -3,47 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <title>test result</title>
+{#    {% load static %}#}
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
 </head>
 <body>
     <h2>Lysine TCGA</h2>
     <!----------- 这里可以换成 div ---------------->
-    <table>
-        <tr><th>user: </th><td{% if user_name %}{% endif %}>{{ user_name }}</td></tr>
-        <tr><th>submit time: </th><td{% if submit_time %}{% endif %}>{{ submit_time }}</td></tr>
-        <tr><th id="task_status">status: </th><td{% if status %}{% endif %}>{{ status }}</td></tr>
-    </table>
+    <div>
+        <p><b>user:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if user_name %}{% endif %}><b>{{ user_name }}</b></span></p>
+        <p><b>submit time:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if submit_time %}{% endif %}><b>{{ submit_time }}</b></span></p>
+        <p><b>status:</b>&nbsp;&nbsp;<span id="task_status" style="color: darkblue" {% if status %}{% endif %}><b>{{ status }}</b></span></p>
+    </div>
+    <div>
+        <img id="processing_img" style="height: 150px; padding-left: 80px; visibility: visible" src="/static/img/running.gif">
+    </div>
     <!------------------------------------------->
-    <table id="result_table" border="1" {% if test_result %}{% endif %}>
+    <table id="result_table" style="visibility: hidden" border="1" {% if test_result %}{% endif %}>
         <tr>
             <th>Cancer Type</th>
             <th>Uniprot Accession</th>
             <th>Position</th>
+            <th>location</th>
             <th>From</th>
             <th>To</th>
             <th>TCGA Patient ID</th>
         </tr>
-        {% for k, v in test_result.items %}
-        <tr>
-            <td>{{ k }}</td>
-            <td>{{ v }}</td>
-            <td>{{ v }}</td>
-            <td>{{ v }}</td>
-            <td>{{ v }}</td>
-            <td>{{ v }}</td>
-        </tr>
+        {% for v in test_result %}
+            <!---- v是列表，django的template中只能这种形式表示，一般python中索引会报错 ---->
+            <tr>
+                <td>{{ v.0 }}</td>
+                <td>{{ v.1 }}</td>
+                <td>{{ v.2 }}</td>
+                <td>{{ v.3 }}</td>
+                <td>{{ v.4 }}</td>
+                <td>{{ v.5 }}</td>
+                <td>{{ v.6 }}</td>
+            </tr>
         {% endfor %}
     </table>
+    <div>
+        <img id="wait_loading" style="height: 230px; padding-left: 80px; visibility: hidden" src="/static/img/loading.gif">
+    </div>
     <div id="visulize" {% if visulize %}{% endif %}>
         <img src="{{ visulize }}">
     </div>
 
 </body>
 <script>
-    var status = document.getElementById("task_status").value;
-    console.log(status);
-
-     // 定义一个读取日志的方法，对日志的内容进行获取并调整前端的显示
+     // 定义一个读取日志的方法，检测是否分析成功，成功返回true；不成功返回false
     function readLog() {
+        var cook_info = document.cookie;
+        cook_info = cook_info.split(";");
+        var username;
+        // 首先从cookie中获取用户名
+        for (var i = 0; i < cook_info.length; i++) {
+            var info = cook_info[i].trim().split("=");
+            if (info[0] == "cname") {
+                username = info[2].split('"')[0];
+            }
+        }
+        $.ajax({
+            type: "post",
+            url: "/check_log/log_res/",
+            dataType: "json",
+            data: {"username": username},
+            async: true,
+            success: function (ret) {
+                var has_result = ret.log_result;
+                running_img_vanish();
+                table_appear();
+                loading_appear();
+                console.log("日志查询成功");
+                return has_result;
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+                console.log("日志查询失败");
+                return false;
+            }
+        });
+    }
+
+    // 动态的running GIF图片消失
+    function running_img_vanish() {
+        $("#processing_img").css("visibility", "hidden");
+        $("#processing_img").hide("slow");
+    }
+
+    // 在最终结果加载出来之前loading GIF显现
+    function loading_appear(){
+        $("#wait_loading").css("visibility", "visible");
+    }
+
+    // 在最终结果加载出来之前loading GIF显现
+    function loading_vanish(){
+        $("#wait_loading").hide("fast");
+    }
+
+    // 分析成功后现实表格并加载结果文件
+    function table_appear() {
+        $("#result_table").css("visibility", "visible");
+    }
+
+    function load_analysis_result() {
+        console.log("zhixingle")
         var cook_info = document.cookie;
         cook_info = cook_info.split(";");
         var username;
@@ -55,27 +120,42 @@
                 console.log(username);
             }
         }
-        var has_result = null;
         $.ajax({
             type: "post",
-            url: "/check_log/log_res/",
+            url: "/get_result/load_result/",
             dataType: "json",
             data: {"username": username},
-            async: false,
+            async: true,
             success: function (ret) {
-                has_result = ret.log_result;
-                console.log("日志查询成功");
+                loading_vanish();
+                console.log("成功加载分析结果");
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(XMLHttpRequest.status);
                 console.log(XMLHttpRequest.readyState);
                 console.log(textStatus);
-                console.log("日志查询失败");
-                has_result = false;
+                console.log("加载分析结果失败");
             }
-        });
-        return has_result;
+        })
     }
-    
+
+    // 如果分析失败，查看日志得到失败原因
+    function load_fail_result() {
+
+    }
+
+    var process = true;
+    if (process){
+          var has_result = readLog();
+        console.log(has_result);
+        // 如果返回true，说明分析成功
+        if (has_result){
+            console.log("分析成功，加载结果");
+            process = false;
+            load_analysis_result();
+        }else{  // 如果返回false则需要检查什么原因导致预测失败
+            load_fail_result();
+        }
+    }
 </script>
 </html>

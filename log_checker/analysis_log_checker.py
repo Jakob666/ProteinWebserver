@@ -23,12 +23,15 @@ class AnalysisLogChecker:
                     content = f.read()
             if "analysis interrupted" in content:
                 check_res = False
+                del content
                 break
             elif "analysis complete." in content:
                 check_res = True
+                del content
                 break
             else:
                 time.sleep(1)
+                del content
                 continue
         return check_res
 

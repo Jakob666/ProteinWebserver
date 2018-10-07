@@ -47,13 +47,13 @@ def test_result_elm2(request):
     logging.debug(has_tab)
 
     # 获取POST方式提交的数据，其中modification是list形式， organism是字符串形式， threshold是字符串形式， cancer是list形式
-    modification = user_post["modification"]
+    modification = user_post["modification"].split("\t")
     logging.debug(modification)
     organism = user_post["organism"]
     logging.debug(organism)
     threshold = user_post["threshold"]
     logging.debug(threshold)
-    cancer = user_post["cancer"]
+    cancer = user_post["cancer"].split("\t")
     logging.debug(cancer)
     email = user_post["email"]
     logging.debug(email)
