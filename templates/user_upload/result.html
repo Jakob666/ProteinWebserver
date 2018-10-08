@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>test result</title>
-{#    {% load static %}#}
-    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+{#    {% load static %}  https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js#}
+    <script type="text/javascript" src="/static/js/jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.form.js"></script>
 </head>
 <body>
     <h2>Lysine TCGA</h2>
@@ -12,22 +14,26 @@
     <div>
         <p><b>user:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if user_name %}{% endif %}><b>{{ user_name }}</b></span></p>
         <p><b>submit time:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if submit_time %}{% endif %}><b>{{ submit_time }}</b></span></p>
-        <p><b>status:</b>&nbsp;&nbsp;<span id="task_status" style="color: darkblue" {% if status %}{% endif %}><b>{{ status }}</b></span></p>
+        <p><b>status:</b>&nbsp;&nbsp;<b><span id="task_status" style="color: darkblue" {% if status %}{% endif %}>{{ status }}</span></b></p>
     </div>
     <div>
         <img id="processing_img" style="height: 150px; padding-left: 80px; visibility: visible" src="/static/img/running.gif">
     </div>
     <!------------------------------------------->
+    <div>
     <table id="result_table" style="visibility: hidden" border="1" {% if test_result %}{% endif %}>
+    <thead>
         <tr>
             <th>Cancer Type</th>
             <th>Uniprot Accession</th>
             <th>Position</th>
-            <th>location</th>
+            <th>Location</th>
             <th>From</th>
             <th>To</th>
             <th>TCGA Patient ID</th>
         </tr>
+    </thead>
+    <tbody id="table_body">
         {% for v in test_result %}
             <!---- v是列表，django的template中只能这种形式表示，一般python中索引会报错 ---->
             <tr>
@@ -40,7 +46,23 @@
                 <td>{{ v.6 }}</td>
             </tr>
         {% endfor %}
+    </tbody>
     </table>
+    </div>
+    <div style="padding-top: 20px">
+    <table id="summary_table" style="visibility: hidden" border="1">
+        <thead>
+        <tr>
+            <th>Uniport Accession</th>
+            <th>Motif length</th>
+            <th>Background length</th>
+            <th>Significant</th>
+            <th>FDR</th>
+        </tr>
+        </thead>
+        <tbody id="summary_tbody"></tbody>
+    </table>
+    </div>
     <div>
         <img id="wait_loading" style="height: 230px; padding-left: 80px; visibility: hidden" src="/static/img/loading.gif">
     </div>
@@ -69,19 +91,20 @@
             data: {"username": username},
             async: true,
             success: function (ret) {
-                var has_result = ret.log_result;
                 running_img_vanish();
+                $("#task_status").text("finished");
                 table_appear();
+                summary_appear();
                 loading_appear();
                 console.log("日志查询成功");
-                return has_result;
+                obj.if_check = ret.log_result;
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(XMLHttpRequest.status);
                 console.log(XMLHttpRequest.readyState);
                 console.log(textStatus);
                 console.log("日志查询失败");
-                return false;
+                obj.if_check = false;
             }
         });
     }
@@ -106,9 +129,11 @@
     function table_appear() {
         $("#result_table").css("visibility", "visible");
     }
+    function summary_appear() {
+        $("#summary_table").css("visibility", "visible");
+    }
 
     function load_analysis_result() {
-        console.log("zhixingle")
         var cook_info = document.cookie;
         cook_info = cook_info.split(";");
         var username;
@@ -125,10 +150,39 @@
             url: "/get_result/load_result/",
             dataType: "json",
             data: {"username": username},
-            async: true,
+            async: false,
             success: function (ret) {
                 loading_vanish();
-                console.log("成功加载分析结果");
+                var row = ret.row_num;
+                var data = ret.test_result;
+                var summary = ret.summary;
+                var detail_info = document.getElementById("table_body");
+                var summary_info = document.getElementById("summary_tbody");
+
+                // 将表格内容清空，仅留下表头
+                $("#table_body").empty();
+                for (var i = 0; i < row; i++){
+                    var tr = document.createElement("tr");
+                    for (var j = 0; j < 7; j++){
+                        var td = document.createElement("td");
+                        td.innerHTML = data[i][j];
+                        tr.appendChild(td);
+                    }
+                    detail_info.appendChild(tr);
+                }
+                $("#result_table").append(detail_info);
+
+                $("#summary_tbody").empty();
+                for (var i = 0; i < summary.length; i++){
+                    var tr = document.createElement("tr");
+                    for (var j = 0; j < 5; j++){
+                        var td = document.createElement("td");
+                        td.innerHTML = summary[i][j];
+                        tr.appendChild(td);
+                    }
+                    summary_info.appendChild(tr);
+                }
+                $("#summary_table").append(summary_info);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 console.log(XMLHttpRequest.status);
@@ -144,18 +198,33 @@
 
     }
 
+
+    var obj = {};
+    obj.if_check = null;
+    //用于监听if_upload的值
+    Object.defineProperty(obj, 'if_check',{
+        get:function(){
+            return if_check;
+        },
+        set:function (newValue) {
+            if_check = newValue;
+            if (newValue){
+                load_analysis_result();
+            }
+        }
+    });
     var process = true;
     if (process){
-          var has_result = readLog();
-        console.log(has_result);
+
+        var has_result = readLog();
         // 如果返回true，说明分析成功
-        if (has_result){
-            console.log("分析成功，加载结果");
-            process = false;
-            load_analysis_result();
-        }else{  // 如果返回false则需要检查什么原因导致预测失败
-            load_fail_result();
-        }
+{#        if (has_result){#}
+{#            console.log("分析成功，加载结果");#}
+{#            process = false;#}
+{#            load_analysis_result();#}
+{#        }else{  // 如果返回false则需要检查什么原因导致预测失败#}
+{#            load_fail_result();#}
+{#        }#}
     }
 </script>
 </html>

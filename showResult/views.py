@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .CONFIG import users_dir
@@ -18,17 +18,21 @@ def success_analysis(request):
     files = os.listdir(os.path.join(users_dir, username))
     files.remove("upload.log")
     mtimes = [os.path.getmtime(os.path.join(users_dir, username, f)) for f in files]
-    latest_upload = files[mtimes.index(max(mtimes))]
+    latest_upload = os.path.join(users_dir, username, files[mtimes.index(max(mtimes))])
 
     result_file = [os.path.join(latest_upload, f) for f in os.listdir(latest_upload) if f.endswith("json")][0]
     with open(result_file, "r") as f:
         data = json.load(f)
 
     result_list = []
+    summary = []
     # data中有两个key，分别是 cancer和 test_res。
     test_res = data["test_res"]
     proteins = test_res.keys()
     for protein in proteins:
+        stats = test_res[protein]
+        summary.append([protein, stats["motif_length"], stats["background_length"], stats["significance"], stats["p_value"]])
+
         # motif_mutation和 background_mutation的形式都是list，list中每一个元素的形式为
         # [cancer, uniprot, position, from, to, patient_id, count]
         background_mutation = test_res[protein]["background_mutation"]
@@ -39,8 +43,14 @@ def success_analysis(request):
         for mm in motif_mutation:
             mm.insert(2, "in motif")
             result_list.append(mm[: -1])
-    return result_list
-    # return render(request, "user_upload/result.html", context={"test_result": result_list, "status": "finished"})
+    row_num = len(result_list)
+
+    response = HttpResponse()
+    response["Content-Type"] = "text/javascript"
+    response.write(json.dumps({"test_result": result_list, "row_num": row_num,
+                               "summary": summary}, ensure_ascii=False))
+
+    return response
 
 
 
