@@ -222,10 +222,8 @@ def user_upload(request):
                                    "file_upload_success": file_upload_success, "user_history": history_record})
     # 形式2：用户提交vcf文件和modification选项
     elif has_vcf and has_modification:
-        response = render(request=request, template_name="user_upload/upload.html",
-                          context={"form": UploadForm(), "file_upload_rule": file_upload_rule,
-                                   "upload_success": "上传成功，开始解析vcf文件",
-                                   "file_upload_success": file_upload_success, "user_history": history_record})
+        response = HttpResponseRedirect(reverse("user_upload:showResult",
+                                                kwargs={"upload_time": cur_time.strftime("%Y%m%d_%H%M%S"), "uid": uid}))
     # 形式3：用户提交tab文件和elm文件
     elif has_tab and has_elm:
         response = render(request=request, template_name="user_upload/upload.html",

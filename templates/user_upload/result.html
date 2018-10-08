@@ -63,6 +63,9 @@
         <tbody id="summary_tbody"></tbody>
     </table>
     </div>
+    <div id="fail_reason" style="visibility: hidden">
+        <p style="padding-left: 30px;"><b></b></p>
+    </div>
     <div>
         <img id="wait_loading" style="height: 230px; padding-left: 80px; visibility: hidden" src="/static/img/loading.gif">
     </div>
@@ -195,7 +198,35 @@
 
     // 如果分析失败，查看日志得到失败原因
     function load_fail_result() {
-
+        var cook_info = document.cookie;
+        cook_info = cook_info.split(";");
+        var username;
+        // 首先从cookie中获取用户名
+        for (var i = 0; i < cook_info.length; i++) {
+            var info = cook_info[i].trim().split("=");
+            if (info[0] == "cname") {
+                username = info[2].split('"')[0];
+                console.log(username);
+            }
+        }
+        $.ajax({
+            type: "post",
+            url: "/get_result/load_result/",
+            dataType: "json",
+            data: {"username": username},
+            async: false,
+            success: function (ret) {
+                var reason = ret.fail_reason;
+                $("#fail_reason").css("visibility", "visible");
+                $("#fail_reason p").text(reason);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+                console.log("加载出错日志失败");
+            }
+        })
     }
 
 
@@ -210,6 +241,8 @@
             if_check = newValue;
             if (newValue){
                 load_analysis_result();
+            }else{
+                load_fail_result();
             }
         }
     });
