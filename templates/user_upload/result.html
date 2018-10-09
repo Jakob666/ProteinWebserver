@@ -96,8 +96,8 @@
             success: function (ret) {
                 running_img_vanish();
                 $("#task_status").text("finished");
-                table_appear();
-                summary_appear();
+{#                table_appear();#}
+{#                summary_appear();#}
                 loading_appear();
                 console.log("日志查询成功");
                 obj.if_check = ret.log_result;
@@ -155,6 +155,8 @@
             data: {"username": username},
             async: false,
             success: function (ret) {
+                table_appear();
+                summary_appear();
                 loading_vanish();
                 var row = ret.row_num;
                 var data = ret.test_result;
@@ -211,12 +213,13 @@
         }
         $.ajax({
             type: "post",
-            url: "/get_result/load_result/",
+            url: "/get_result/check_reason/",
             dataType: "json",
             data: {"username": username},
             async: false,
             success: function (ret) {
                 var reason = ret.fail_reason;
+                loading_vanish();
                 $("#fail_reason").css("visibility", "visible");
                 $("#fail_reason p").text(reason);
             },
