@@ -63,11 +63,11 @@
         <tbody id="summary_tbody">
         {% for v in summary %}
         <tr>
-            <td>v.0</td>
-            <td>v.1</td>
-            <td>v.2</td>
-            <td>v.3</td>
-            <td>v.4</td>
+            <td>{{ v.0 }}</td>
+            <td>{{ v.1 }}</td>
+            <td>{{ v.2 }}</td>
+            <td>{{ v.3 }}</td>
+            <td>{{ v.4 }}</td>
         </tr>
         {% endfor %}
 
@@ -99,7 +99,7 @@
         var tableObj = document.getElementById("result_table_body").rows[0];
         if (tableObj != null){
             $("#result_table").css("visibility", "visible");
-            $("#summary_table").css("visibility", "visble");
+            $("#summary_table").css("visibility", "visible");
             load = false;
         }
     }

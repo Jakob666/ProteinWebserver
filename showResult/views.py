@@ -67,6 +67,7 @@ def view_history(request, upload_time, status):
 
     if status == "completed":
         result_list, row_num, summary = load_completed_result(upload_dir)
+        print(summary)
         response = render(request, "showResult/view_history.html", context={
             "user_name": user_name, "submit_time": upload_time, "status": status, "test_result": result_list,
             "summary": summary,
