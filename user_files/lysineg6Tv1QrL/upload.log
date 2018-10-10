@@ -1,7 +1,1 @@
-2018-10-09 21:13:50,614 - root - user_upload - DEBUG : elm file upload completed.
-2018-10-09 21:13:50,614 - root - user_upload - DEBUG : post_modification:Acethylation
-2018-10-09 21:13:50,615 - root - user_upload - DEBUG : post_organism:human
-2018-10-09 21:13:50,615 - root - user_upload - DEBUG : post_threshold:h
-2018-10-09 21:13:50,615 - root - user_upload - DEBUG : post_cancer:BRCA
-2018-10-09 21:13:50,616 - root - user_upload - DEBUG : post_email:
-2018-10-09 21:13:50,634 - root - user_upload - DEBUG : successfully upload.
+2018-10-10 14:55:27,146 - root - user_upload - ERROR : Invalid vcf file suffix. Fail to upload.

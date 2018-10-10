@@ -51,10 +51,5 @@ def download_result(request, username):
     response["Content-Disposition"] = 'attachment;filename="{0}"'.format(download_filename)
 
     return response
-    # temp1 = tempfile.TemporaryFile()
-    # archive = zipfile.ZipFile(temp1, "w", zipfile.ZIP_DEFLATED)
-    # target_file = os.path.join(latest_upload, "detailed_result")
-    # archive.write(target_file, "%s_detail" % username)
-    # archive.close()
 
 
