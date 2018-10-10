@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^check_log/', include("log_checker.urls")),
     url(r'^get_example/', include("getExample.urls")),
     url(r'^get_result/', include("showResult.urls")),
+    url(r'^user_download/', include("download.urls")),
 ]

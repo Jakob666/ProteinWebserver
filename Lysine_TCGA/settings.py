@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'log_checker.apps.LogCheckerConfig',
     'getExample.apps.GetexampleConfig',
     'showResult.apps.ShowresultConfig',
+    'download.apps.DownloadConfig',
 ]
 
 MIDDLEWARE = [
