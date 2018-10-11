@@ -1,0 +1,50 @@
+2018-10-11 14:20:42,901 - root - test_result_elm2 - DEBUG : True
+2018-10-11 14:20:42,902 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:20:42,902 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:20:42,902 - root - test_result_elm2 - DEBUG : ['Acethylation']
+2018-10-11 14:20:42,902 - root - test_result_elm2 - DEBUG : human
+2018-10-11 14:20:42,902 - root - test_result_elm2 - DEBUG : h
+2018-10-11 14:20:42,902 - root - test_result_elm2 - DEBUG : ['BRCA']
+2018-10-11 14:20:42,902 - root - test_result_elm2 - DEBUG : None
+2018-10-11 14:20:42,903 - root - test_result_elm2 - DEBUG : only analysis elm file
+2018-10-11 14:20:48,393 - root - test_result_elm2 - DEBUG : analysis complete.
+2018-10-11 14:21:56,138 - root - test_result_elm2 - DEBUG : True
+2018-10-11 14:21:56,139 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:21:56,139 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:21:56,139 - root - test_result_elm2 - DEBUG : ['Acethylation']
+2018-10-11 14:21:56,139 - root - test_result_elm2 - DEBUG : human
+2018-10-11 14:21:56,140 - root - test_result_elm2 - DEBUG : h
+2018-10-11 14:21:56,140 - root - test_result_elm2 - DEBUG : ['BRCA']
+2018-10-11 14:21:56,140 - root - test_result_elm2 - DEBUG : None
+2018-10-11 14:21:56,140 - root - test_result_elm2 - DEBUG : only analysis elm file
+2018-10-11 14:22:01,566 - root - test_result_elm2 - DEBUG : analysis complete.
+2018-10-11 14:22:18,059 - root - test_result_elm2 - DEBUG : True
+2018-10-11 14:22:18,059 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:22:18,059 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:22:18,060 - root - test_result_elm2 - DEBUG : ['Acethylation']
+2018-10-11 14:22:18,060 - root - test_result_elm2 - DEBUG : human
+2018-10-11 14:22:18,060 - root - test_result_elm2 - DEBUG : h
+2018-10-11 14:22:18,060 - root - test_result_elm2 - DEBUG : ['BRCA']
+2018-10-11 14:22:18,061 - root - test_result_elm2 - DEBUG : None
+2018-10-11 14:22:18,061 - root - test_result_elm2 - DEBUG : only analysis elm file
+2018-10-11 14:22:23,434 - root - test_result_elm2 - DEBUG : analysis complete.
+2018-10-11 14:22:34,515 - root - test_result_elm2 - DEBUG : True
+2018-10-11 14:22:34,515 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:22:34,516 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:22:34,516 - root - test_result_elm2 - DEBUG : ['Acethylation']
+2018-10-11 14:22:34,516 - root - test_result_elm2 - DEBUG : human
+2018-10-11 14:22:34,516 - root - test_result_elm2 - DEBUG : h
+2018-10-11 14:22:34,516 - root - test_result_elm2 - DEBUG : ['BRCA']
+2018-10-11 14:22:34,516 - root - test_result_elm2 - DEBUG : None
+2018-10-11 14:22:34,516 - root - test_result_elm2 - DEBUG : only analysis elm file
+2018-10-11 14:22:39,947 - root - test_result_elm2 - DEBUG : analysis complete.
+2018-10-11 14:22:52,849 - root - test_result_elm2 - DEBUG : True
+2018-10-11 14:22:52,849 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:22:52,849 - root - test_result_elm2 - DEBUG : False
+2018-10-11 14:22:52,849 - root - test_result_elm2 - DEBUG : ['Acethylation']
+2018-10-11 14:22:52,849 - root - test_result_elm2 - DEBUG : human
+2018-10-11 14:22:52,849 - root - test_result_elm2 - DEBUG : h
+2018-10-11 14:22:52,849 - root - test_result_elm2 - DEBUG : ['BRCA']
+2018-10-11 14:22:52,849 - root - test_result_elm2 - DEBUG : None
+2018-10-11 14:22:52,849 - root - test_result_elm2 - DEBUG : only analysis elm file
+2018-10-11 14:22:58,229 - root - test_result_elm2 - DEBUG : analysis complete.

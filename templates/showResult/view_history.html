@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <title>test result</title>
 {#    {% load static %}  https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js#}
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-table.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <script type="text/javascript" src="/static/js/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="/static/js/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="/static/js/jquery.form.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap-table.js"></script>
 </head>
 <body>
+<div class="container">
     <h2>Lysine TCGA</h2>
     <!----------- 这里可以换成 div ---------------->
     <div>
@@ -16,14 +22,14 @@
         <p><b>submit time:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if submit_time %}{% endif %}><b>{{ submit_time }}</b></span></p>
         <p><b>status:</b>&nbsp;&nbsp;<b><span id="task_status" style="color: darkblue" {% if status %}{% endif %}>{{ status }}</span></b>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <button id="download_result">download</button>&nbsp;&nbsp;&nbsp;&nbsp;
-            <button id="back_to_server">back</button>
+            <button id="download_result" class="btn btn-default" disabled="disabled">download</button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="back_to_server" class="btn btn-default">back</button>
         </p>
     </div>
     <div>
-    <table id="result_table" style="visibility: hidden" border="1" {% if test_result %}{% endif %}>
+    <table id="result_table" style="visibility: hidden" class="table table-responsive table-bordered table-hover" {% if test_result %}{% endif %}>
     <thead>
-        <tr>
+        <tr class="info">
             <th>Cancer Type</th>
             <th>Uniprot Accession</th>
             <th>Position</th>
@@ -50,9 +56,9 @@
     </table>
     </div>
     <div style="padding-top: 20px">
-    <table id="summary_table" style="visibility: hidden" border="1" {% if summary %} {% endif %}>
+    <table id="summary_table" style="visibility: hidden" class="table table-responsive table-bordered table-hover" {% if summary %} {% endif %}>
         <thead>
-        <tr>
+        <tr class="info">
             <th>Uniport Accession</th>
             <th>Motif length</th>
             <th>Background length</th>
@@ -80,6 +86,7 @@
     <div id="visulize" {% if visulize %}{% endif %}>
         <img src="{{ visulize }}">
     </div>
+</div>
 </body>
 <script>
     $("#back_to_server").click(function () {
@@ -100,6 +107,7 @@
         if (tableObj != null){
             $("#result_table").css("visibility", "visible");
             $("#summary_table").css("visibility", "visible");
+            $("#download_result").removeAttr("disabled");
             load = false;
         }
     }

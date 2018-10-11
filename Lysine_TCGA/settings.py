@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     'getExample.apps.GetexampleConfig',
     'showResult.apps.ShowresultConfig',
     'download.apps.DownloadConfig',
+    'crispy_forms',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
