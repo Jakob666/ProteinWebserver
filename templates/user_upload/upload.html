@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Lysine TCGA Web Server</title>
     {% load static %}
+    {% load crispy_forms_tags %}
     <link rel="stylesheet" href="/static/css/bootstrap.css">
     <link rel="stylesheet" href="/static/css/bootstrap-table.css">
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
@@ -18,7 +19,8 @@
 
         <div class="col-sm-9">
 {#action={% url "user_upload:user_upload" %} #}
-            <form method="post" enctype="multipart/form-data" role="form">
+{#            {% crispy form %}#}
+            <form method="post" enctype="multipart/form-data" role="form" class="form-horizontal">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
                 <div class="form-group">
@@ -38,7 +40,7 @@
                 <div>
                     {{ file_upload_rule }}
                 </div>
-                <div>
+                <div class="custom-file">
                     {{ form.elm_file.errors }}
                     {{ form.elm_file.label_tag }}
                     {{ form.elm_file }}
