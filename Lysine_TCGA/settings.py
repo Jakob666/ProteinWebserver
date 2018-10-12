@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'getExample.apps.GetexampleConfig',
     'showResult.apps.ShowresultConfig',
     'download.apps.DownloadConfig',
+    'user_history.apps.UserHistoryConfig',
     'crispy_forms',
 ]
 

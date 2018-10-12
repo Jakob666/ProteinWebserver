@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^get_example/', include("getExample.urls")),
     url(r'^get_result/', include("showResult.urls")),
     url(r'^user_download/', include("download.urls")),
+    url(r'^user_history/', include("user_history.urls"))
 ]

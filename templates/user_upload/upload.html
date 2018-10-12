@@ -12,6 +12,7 @@
     <script type="text/javascript" src="/static/js/jquery.form.js"></script>
     <script type="text/javascript" src="/static/js/jquery-3.1.1.js"></script>
     <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/bootstrap-table.js"></script>
 </head>
 <body>
@@ -114,12 +115,19 @@
     <br />
     <br />
     <div class="col-sm-9">
+        <div>
+            <h3 class="glyphicon glyphicon-time"><strong>History Tasks</strong></h3>
+        </div>
+        <button id="del_history" class="btn btn-success glyphicon glyphicon-trash" style="margin-bottom: 10px">Clear</button>
         <table class="table table-bordered table-hover table-responsive"  {% if user_history %}{% endif %}>
+        <thead>
             <tr class="info">
                 <th class="col-sm-3">upload time</th>
                 <th class="col-sm-3">task status</th>
                 <th class="col-sm-3">detail</th>
             </tr>
+        </thead>
+        <tbody id="history_record">
             {% for k, v in user_history.items %}
             <tr>
 
@@ -135,6 +143,7 @@
                 {% endif %}
             </tr>
             {% endfor %}
+        </tbody>
         </table>
     </div>
 </div>
@@ -252,6 +261,43 @@
             }
         });
     }
+
+    // 定义一个方法用于获取cookie中的用户名
+    function get_uname(){
+        var cook_info = document.cookie;
+        cook_info = cook_info.split(";");
+        var username;
+        // 首先从cookie中获取用户名
+        for (var i = 0; i < cook_info.length; i++) {
+            var info = cook_info[i].trim().split("=");
+            if (info[0] == "cname") {
+                username = info[2].split('"')[0];
+                console.log(username);
+            }
+        }
+        return username;
+    }
+
+    $("#del_history").click(function () {
+        $("#history_record").empty();
+        var username = get_uname();
+        $.ajax({
+            type: "post",
+            url: "/user_history/del_history/",
+            data: {"username": username},
+            async: true,
+            success: function () {
+                console.log("删除用户历史任务记录");
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+                console.log(errorThrown);
+                console.log("历史任务删除失败");
+            }
+        })
+    });
 
 {#    $(".footer").load("../static/html/footer.html");#}
 {#    $(".header").load("../static/html/header.html");#}
