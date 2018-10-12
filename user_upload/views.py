@@ -29,8 +29,8 @@ def user_upload(request):
     :return:
     """
     # 用于告知用户如何正确上传文件
-    file_upload_rule = "为确保正常执行服务器预测功能，请按照如下任意形式上传文件:\n(1) 上传单独的一份elm格式文件。\n" \
-                       "(2) 上传一份elm和一份vcf格式文件。\n(3) 上传一份elm和一份tab格式文件\n(4) 上传单独的vcf或tab格式文件并选取修饰类型。"
+    file_upload_rule = ["为确保正常执行服务器预测功能，请按照如下任意形式上传文件:", " Ⅰ. 上传单独的一份elm格式文件。",
+                        "Ⅱ. 上传一份elm和一份vcf格式文件。", "Ⅲ. 上传一份elm和一份tab格式文件", "Ⅳ. 上传单独的vcf或tab格式文件并选取修饰类型。"]
     history_record = HistoryResult.get_task_status(request)
     if request.method == "GET":
         obj = UploadForm()

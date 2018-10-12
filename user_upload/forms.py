@@ -13,7 +13,7 @@ class UploadForm(forms.Form):
                                  widget=forms.Textarea(attrs={"class": "form-control input-xlarge", "rows": 10}))
     # 上传elm、vcf和Tab文件的表单元素
     elm_file = forms.FileField(label="elm file", required=False, widget=forms.ClearableFileInput(
-        attrs={"class": "custom-file-input"}))
+        attrs={"type": "file", "id": "elm_upload", "value": "browse"}))
     vcf_file = forms.FileField(label="vcf file", required=False)
     tab_file = forms.FileField(label="Tab file", required=False)
     # 物种选项，暂定会有多个物种，返回类型是字符串

@@ -37,26 +37,29 @@
                     <input id="tab_example" class="btn btn-default" type="button" value="tab exmple" />
                     <input id="clear_all" class="btn btn-default" type="button" value="clear" />
                 </div>
-                <div>
-                    {{ file_upload_rule }}
+
+                <div {% if file_upload_rule %}{% endif %}>
+                    {% for rule in file_upload_rule%}
+                    <p class="text-info" style="padding-left: 10px">{{ rule }}</p>
+                    {% endfor %}
                 </div>
-                <div class="custom-file">
+                <div style="width: 300px">
                     {{ form.elm_file.errors }}
                     {{ form.elm_file.label_tag }}
                     {{ form.elm_file }}
                     <p {% if elm_file_error %} {% endif %}>
                         {{ elm_file_error }}
                     </p>
-                </div>
-                <div>
+{#                </div>#}
+{#                <div>#}
                     {{ form.vcf_file.errors }}
                     {{ form.vcf_file.label_tag }}
                     {{ form.vcf_file }}
                     <p {% if vcf_file_error %} {% endif %}>
                         {{ vcf_file_error }}
                     </p>
-                </div>
-                <div>
+{#                </div>#}
+{#                <div>#}
                     {{ form.tab_file.errors }}
                     {{ form.tab_file.label_tag }}
                     {{ form.tab_file }}
@@ -67,32 +70,33 @@
                         {{ file_upload_error }}
                     </p>
                 </div>
+
                 <div id="upload_success">
                     <p  {% if file_upload_success %} {% endif %}>
                         {{ file_upload_success }}
                     </p>
                 </div>
-                <div>
+                <div style="padding-top: 10px">
                     {{ form.organism.errors }}
                     {{ form.organism.label_tag }}
                     {{ form.organism }}
                 </div>
-                <div>
+                <div style="padding-top: 10px">
                     {{ form.modification.errors }}
                     {{ form.modification.label_tag }}
                     {{ form.modification }}
                 </div>
-                <div>
+                <div style="padding-top: 10px">
                     {{ form.cancer.errors }}
                     {{ form.cancer.label_tag }}
                     {{ form.cancer }}
                 </div>
-                <div>
+                <div style="padding-top: 10px">
                     {{ form.threshold.errors }}
                     {{ form.threshold.label_tag }}
                     {{ form.threshold }}
                 </div>
-                <div>
+                <div style="padding-top: 10px">
                     {{ form.email.errors }}
                     {{ form.email.label_tag }}
                     {{ form.email }}
@@ -246,7 +250,6 @@
         });
     }
 
-    
 
 
 
