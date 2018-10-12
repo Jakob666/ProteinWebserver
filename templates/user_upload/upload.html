@@ -15,67 +15,68 @@
     <script src="/static/js/bootstrap-table.js"></script>
 </head>
 <body>
+<header class="header"></header>
 <div class="container">
 
-        <div class="col-sm-9">
+    <div class="col-sm-9">
 {#action={% url "user_upload:user_upload" %} #}
 {#            {% crispy form %}#}
-            <form method="post" enctype="multipart/form-data" role="form" class="form-horizontal">
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-                <div class="form-group">
-                    {{ form.input_text.errors }}
-                    {{ form.input_text.label_tag }}
-                    {{ form.input_text }}
-                    {% if input_text.error %}
-                        input_text.error
-                    {% endif %}
-                </div>
-                <div class="btn-group btn-group-lg" style="padding-left: 20px">
-                    <input id="elm_example" class="btn btn-default" type="button" value="elm exmple" />
-                    <input id="vcf_example" class="btn btn-default" type="button" value="vcf exmple" />
-                    <input id="tab_example" class="btn btn-default" type="button" value="tab exmple" />
-                    <input id="clear_all" class="btn btn-default" type="button" value="clear" />
-                </div>
-
-                <div {% if file_upload_rule %}{% endif %}>
-                    {% for rule in file_upload_rule%}
-                    <p class="text-info" style="padding-left: 10px">{{ rule }}</p>
-                    {% endfor %}
-                </div>
-                <div style="width: 300px">
+        <form method="post" enctype="multipart/form-data" role="form" class="form-horizontal">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group">
+                {{ form.input_text.errors }}
+                {{ form.input_text.label_tag }}
+                {{ form.input_text }}
+                {% if input_text.error %}
+                    input_text.error
+                {% endif %}
+            </div>
+            <div class="btn-group btn-group-lg" style="padding-left: 20px">
+                <input id="elm_example" class="btn btn-default" type="button" value="elm exmple" />
+                <input id="vcf_example" class="btn btn-default" type="button" value="vcf exmple" />
+                <input id="tab_example" class="btn btn-default" type="button" value="tab exmple" />
+                <input id="clear_all" class="btn btn-default" type="button" value="clear" />
+            </div>
+            <div>
+                <div class="col-md-6" style="width: 350px; padding-top: 10px">
                     {{ form.elm_file.errors }}
                     {{ form.elm_file.label_tag }}
                     {{ form.elm_file }}
                     <p {% if elm_file_error %} {% endif %}>
                         {{ elm_file_error }}
                     </p>
-{#                </div>#}
-{#                <div>#}
+
                     {{ form.vcf_file.errors }}
                     {{ form.vcf_file.label_tag }}
                     {{ form.vcf_file }}
                     <p {% if vcf_file_error %} {% endif %}>
                         {{ vcf_file_error }}
                     </p>
-{#                </div>#}
-{#                <div>#}
+
                     {{ form.tab_file.errors }}
                     {{ form.tab_file.label_tag }}
                     {{ form.tab_file }}
                     <p {% if tab_file_error %} {% endif %}>
                         {{ tab_file_error }}
                     </p>
-                    <p id="upload_error" {% if file_upload_error %} {% endif %}>
+                    <p id="upload_error" style="padding-top: 10px" {% if file_upload_error %} {% endif %}>
                         {{ file_upload_error }}
                     </p>
                 </div>
-
+                <div class="col-md-6" style="padding-top: 20px; padding-bottom: 15px" {% if file_upload_rule %}{% endif %}>
+                    {% for rule in file_upload_rule%}
+                    <p class="text-info" style="padding-left: 10px">{{ rule }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div>
                 <div id="upload_success">
                     <p  {% if file_upload_success %} {% endif %}>
                         {{ file_upload_success }}
                     </p>
                 </div>
+
                 <div style="padding-top: 10px">
                     {{ form.organism.errors }}
                     {{ form.organism.label_tag }}
@@ -101,9 +102,10 @@
                     {{ form.email.label_tag }}
                     {{ form.email }}
                 </div>
+            </div>
                 <input id="upload_file" class="btn btn-primary" type="submit" value="upload file" onclick="upload()" />
-            </form>
-        </div>
+        </form>
+    </div>
 
     <!------- 如果上传成功会有提示长传成功并开始运算 ---------------->
     <div  {% if upload_success %}{% endif %}>
@@ -136,6 +138,7 @@
         </table>
     </div>
 </div>
+<footer class="footer" style="padding-top: 10px"></footer>
 </body>
 <script type="text/javascript">
     function getCookie(name) {
@@ -250,8 +253,8 @@
         });
     }
 
-
-
+{#    $(".footer").load("../static/html/footer.html");#}
+{#    $(".header").load("../static/html/header.html");#}
 
 </script>
 </html>

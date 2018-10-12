@@ -1,0 +1,92 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8">
+            <p id="copyright" class="text-muted" align='center'>Lysine TCGA &copy; 2016. The Ren Lab. All Rights Reserved</p>
+            
+
+            <div class="col-xs-5">
+                <div id="visit_history" style="width:130px;margin-right: 0px;float: right">
+                     <!-- <script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0py7sz1xq38&amp;m=0&amp;c=ff0000&amp;cr1=ffffff&amp;sx=0" async="async"></script> -->
+                </div>
+            </div>
+            <div class="col-xs-7">
+                <!-- <script type="text/javascript" src="//ra.revolvermaps.com/0/0/0.js?i=0322ugj9x9u&amp;d=3&amp;p=1&amp;b=0&amp;w=268&amp;g=2&amp;f=arial&amp;fs=14&amp;r=0&amp;c0=362b05&amp;c1=375363&amp;c2=000000&amp;ic0=0&amp;ic1=0" async="async"></script> -->
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-2"></div>
+
+
+	<a href="#" id="back-to-top" title="Back to top"></a>
+</div>
+
+<script>
+	if ($('#back-to-top').length) {
+    var scrollTrigger = 100, // px
+        backToTop = function () {
+            var scrollTop = $(window).scrollTop();
+            if (scrollTop > scrollTrigger) {
+                $('#back-to-top').addClass('show');
+            } else {
+                $('#back-to-top').removeClass('show');
+            }
+        };
+    backToTop();
+    $(window).on('scroll', function () {
+        backToTop();
+    });
+    $('#back-to-top').on('click', function (e) {
+        e.preventDefault();
+        $('html,body').animate({
+            scrollTop: 0
+        }, 700);
+    });
+}
+    var now = new Date();    
+    var y = now.getFullYear();
+    document.getElementById("copyright").innerHTML="m6ASNP &copy; "+y+". The Ren Lab. All Rights Reserved";
+</script>
+<style>
+.footer{
+    margin-top: 0px;
+    /*height: 70px;*/
+    padding: 10px;
+    background-color: #EFEDED;
+    font-size: 18px;
+}
+.text-muted{
+    margin-top: 10px;
+}
+#back-to-top {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 9999;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    line-height: 30px;
+    background: url("http://codyhouse.co/demo/back-to-top/img/cd-top-arrow.svg") no-repeat scroll center 50% rgba(91, 183, 91, 0.8);
+    color: #444;
+    cursor: pointer;
+    border: 0;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: opacity 0.2s ease-out;
+    opacity: 0;
+}
+#back-to-top:hover {
+    background: url("http://codyhouse.co/demo/back-to-top/img/cd-top-arrow.svg") no-repeat scroll center #5bb75b;
+}
+#back-to-top.show {
+    opacity: 1;
+}
+#content {
+    height: 2000px;
+}
+</style>
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.8.0/loading-bar.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.0.1/sweetalert-dev.min.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.0.1/sweetalert.min.css"> -->

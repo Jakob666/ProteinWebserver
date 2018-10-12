@@ -1,0 +1,126 @@
+<style type="text/css">
+	.navbar { margin-bottom: 0px;     background: url(../img/background.png)repeat;}
+	/*#main-nav ul{ margin-top: 20px; margin-bottom: 20px; }*/
+	.navbar li a{ font-size: 18px; }
+	.container > div > a { /*margin-top: -10px;*/ }
+	#header_nav > li, #header_nav > li.active > a:hover, #header_nav > li:not(.active) > a:hover { border-radius: 5px; }
+	#header_nav > li.active { background: #5bb75b; }
+	.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus { background: #5bb75b; }
+	#header_nav > li.active > a { color: #fff; }
+	#header_nav > li:not(.active) > a { color: #817777; }
+	form { margin-top: 30px; }
+	#logo { height: 60px; width: 172px; position: relative; top: -10px; }
+</style>
+<nav class="navbar navbar-default" id="header_nav" style="">
+	<div class="container">
+		<!-- Brand and toggle get grouped for better mobile display -->		
+			<div class="row">
+				<div class="col-md-4">
+					<div class="navbar-header">	
+						<a class="navbar-brand" href="/templates/user_upload/upload.html">
+							<img src="/static/img/Logo_16.png" style="width:450px;"></img>
+						</a>
+					</div>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="col-md-8" style="margin:70px 0px 0px 0px">
+					<div class="collapse navbar-collapse" id="main-nav" style="width:auto;float:right;padding-right:0px!important;">
+						<ul class="nav nav-pills" id="header_nav">
+							<li><a href="" id='link_index'>Home</a></li>
+							<li><a href="/templates/user_upload/upload.html" id='link_webserver'>Web Server</a></li>
+							<li><a href="" id='link_download'>Download</a></li>
+							<li><a href="" id='link_help'>Help</a></li>
+							<li><a href="/static/citation.html" id='link_citation'>Citation</a></li>
+							<li><a href="/static/contact.html" id='link_contact'>Contact</a></li>
+						</ul>
+					</div><!-- /.navbar-collapse -->
+				</div>
+			</div>		
+	</div>
+		<!--div class="col-md-5">
+			<form>
+				<div class="input-group">
+					<div class="input-group-btn">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="species">Species <span class="caret"></span></button>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="javascript:void(0)" onclick="choose_species('Human')">Human</a></li>
+							<li><a href="javascript:void(0)" onclick="choose_species('Mouse')">Mouse</a></li>
+						</ul>
+					</div>
+					<input type="text" class="form-control" placeholder="Input your interest" id="input_content" onkeypress="return bind_key_press(event)" />
+					<div class="input-group-btn search_btn_div">
+						 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" onclick="launch_search()"><span class="glyphicon glyphicon-search"></span> Search</button>
+					</div>
+				</div>
+			</form>
+		</div-->
+	<!-- /.container-fluid -->
+</nav>
+
+<script>
+	$.ajaxSetup ({ cache: false });
+	var nav_item={
+		'index.html':'index',
+		'webserver.html':'webserver',
+		'search.html':'search',
+		'download.html':'download',
+		'help.html':'help',
+		'contact.html':'contact',
+		'citation.html':'citation',
+		'': 'index',
+		'result.php':'webserver'
+	}
+	var args = window.location.href.split("org")[1].split('/');
+	if(args.length>2){
+		var page = args[2];
+	}else{
+		var getphp=args[1].split('?');
+		var page = getphp[0];
+	}
+	// console.log('#link_'+nav_item[page])
+	$('#link_'+nav_item[page]).parent().addClass('active')
+
+</script>
+
+<!--script type="text/javascript">
+	var species = "Human"
+
+	function choose_species(sp){
+		species = sp
+		$("#species").html(sp+' <span class="caret"></span>')
+	}
+
+	function launch_search(){
+		var input = $("#input_content").val().trim()
+		window.location = construct_redirect_url(check_search_type(input), input, species)
+	}
+
+	function check_search_type(input) {
+		if (input.startsWith("rs")) {
+			if (!isNaN(input.substring(2, 3))) {
+				//input is a Rs ID
+				return "rsID"
+			}
+		}
+		if (input.startsWith("chr")) {
+			return "region"
+		}
+		return "gene"
+	}
+
+	/*function construct_redirect_url(type, input, species) {
+		var url_base = "../../m6ASNP/result.html?"
+		var url = ""
+		var get_params = {}
+		get_params["type"] = type
+		get_params["table"] = "m6a_snp"
+		get_params["input"] = input
+		get_params["species"] = species
+		for (var key in get_params) {
+			url += ("&"+key+"="+get_params[key])
+		}
+		return url_base+url.substring(1)
+	}
+
+</script>
