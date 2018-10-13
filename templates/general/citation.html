@@ -1,0 +1,58 @@
+{% extends "header_and_footer.html" %}
+
+{% block title %}Lysine-TCGA Citation{% endblock %}
+{% block other_js %}<script src="/static/js/json2.js"></script>{% endblock %}
+
+{% block other_style %}
+<style>
+    .citation { border-left: 5px; border-right: 1px; border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #008000; padding: 30px;height:350px;background-color: #fff;}
+    .cover {margin-right: 30px;}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron" style="background-color:#5bb75b;margin-top:0px;color:white;">
+        <div class="container">
+                <div class="col-xs-12">
+                        <h1>※Citation</h1>
+                </div>
+        </div>
+</div>
+<div id="container" class="container">
+    <div class="col-xs-12">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 id="h1" class="page-header">Please cite:</h1>
+                <!--p>If you have any questions or comments, please contact us.</p-->
+                <div class="citation">
+                    <div class="col-md-2">
+                        <img class="cover" src="/static/img/GIGA.png" align="left" width="200px">
+                    </div>
+                    <div class="col-md-9 col-md-offset-1">
+                        <h3 style="margin-top:0px;!important"><b>m6ASNP: a tool for annotating genetic variants by m6A function. </b></h3>
+                        <p>
+                    Shuai Jiang<sup>†</sup>, Yubin Xie<sup>†</sup>, Zhihao He<sup>†</sup>, Ya Zhang, Yuli Zhao, Li Chen, Yueyuan Zheng, Yanyan Miao, <a href="mailto:zuozhx@sysucc.org.cn">Zhixiang Zuo</a> and <a href="mailto:renjian.sysu@gmail.com"> Jian Ren</a>.<br>
+                        </p>
+                        <i><b>GigaScience.</b>Jiang, S., et al., m6ASNP: a tool for annotating genetic variants by m6A function. GigaScience, 2018. 7(5): giy035.</i> doi: <a href="https://academic.oup.com/gigascience/article/7/5/giy035/4958982">https://doi.org/10.1093/gigascience/giy035</a><br>
+                        <p><a href="//dx.doi.org/10.5524/100428" target="_blank">[Abstract]</a>
+                        <a href="//m6asnp.renlab.org/pdf/m6ASNP.pdf" target="_blank">[Full Text]</a> </p>
+                        <h3><b>Supporting data for “m6ASNP: a tool for annotating genetic variants by m6A function”</b></h3>
+                        <p>
+                    Shuai Jiang<sup>†</sup>, Yubin Xie<sup>†</sup>, Zhihao He<sup>†</sup>, Ya Zhang, Yuli Zhao, Li Chen, Yueyuan Zheng, Yanyan Miao, <a href="mailto:zuozhx@sysucc.org.cn">Zhixiang Zuo</a> and <a href="mailto:renjian.sysu@gmail.com"> Jian Ren</a>.<br>
+                        </p>
+                        <i><b>GigaDB Dataset.</b>2018 (Accepted).</i> doi: <a href="//dx.doi.org/10.5524/100428">//dx.doi.org/10.5524/100428</a> &nbsp<a href="//gigadb.org/dataset/100428" target="_blank">[Link]</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12">
+            <!-- <div class="row">
+                    <div>
+                            <h1 id="h2" class="page-header">Citation</h1>
+                            <p>In progress of publishing.</p>
+                    </div>
+            </div> -->
+    </div>
+</div><br><br><br><br><br><br><br><br>
+{% endblock %}

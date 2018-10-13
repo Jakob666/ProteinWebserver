@@ -1,155 +1,137 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Lysine TCGA Web Server</title>
-    {% load static %}
-    {% load crispy_forms_tags %}
-    <link rel="stylesheet" href="/static/css/bootstrap.css">
-    <link rel="stylesheet" href="/static/css/bootstrap-table.css">
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-    <script type="text/javascript" src="/static/js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="/static/js/jquery.form.js"></script>
-    <script type="text/javascript" src="/static/js/jquery-3.1.1.js"></script>
-    <script src="/static/js/bootstrap.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/bootstrap-table.js"></script>
-</head>
-<body>
-<header class="header"></header>
-<div class="container">
+{% extends "header_and_footer.html" %}
+{% block title %}Lysine TCGA Web Server{% endblock %}
+{% block content %}
+    <div class="container">
 
-    <div class="col-sm-9">
-{#action={% url "user_upload:user_upload" %} #}
-{#            {% crispy form %}#}
-        <form method="post" enctype="multipart/form-data" role="form" class="form-horizontal">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            <div class="form-group">
-                {{ form.input_text.errors }}
-                {{ form.input_text.label_tag }}
-                {{ form.input_text }}
-                {% if input_text.error %}
-                    input_text.error
-                {% endif %}
-            </div>
-            <div class="btn-group btn-group-lg" style="padding-left: 20px">
-                <input id="elm_example" class="btn btn-default" type="button" value="elm exmple" />
-                <input id="vcf_example" class="btn btn-default" type="button" value="vcf exmple" />
-                <input id="tab_example" class="btn btn-default" type="button" value="tab exmple" />
-                <input id="clear_all" class="btn btn-default" type="button" value="clear" />
-            </div>
-            <div>
-                <div class="col-md-6" style="width: 350px; padding-top: 10px">
-                    {{ form.elm_file.errors }}
-                    {{ form.elm_file.label_tag }}
-                    {{ form.elm_file }}
-                    <p {% if elm_file_error %} {% endif %}>
-                        {{ elm_file_error }}
-                    </p>
+        <div class="col-sm-9">
+            <form method="post" enctype="multipart/form-data" role="form" class="form-horizontal">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.input_text.errors }}
+                    {{ form.input_text.label_tag }}
+                    {{ form.input_text }}
+                    {% if input_text.error %}
+                        input_text.error
+                    {% endif %}
+                </div>
+                <div class="btn-group btn-group-lg" style="padding-left: 20px">
+                    <input id="elm_example" class="btn btn-default" type="button" value="elm exmple" />
+                    <input id="vcf_example" class="btn btn-default" type="button" value="vcf exmple" />
+                    <input id="tab_example" class="btn btn-default" type="button" value="tab exmple" />
+                    <input id="clear_all" class="btn btn-default" type="button" value="clear" />
+                </div>
+                <div>
+                    <div class="col-md-6" style="width: 350px; padding-top: 10px">
+                        {{ form.elm_file.errors }}
+                        {{ form.elm_file.label_tag }}
+                        {{ form.elm_file }}
+                        <p {% if elm_file_error %} {% endif %}>
+                            {{ elm_file_error }}
+                        </p>
 
-                    {{ form.vcf_file.errors }}
-                    {{ form.vcf_file.label_tag }}
-                    {{ form.vcf_file }}
-                    <p {% if vcf_file_error %} {% endif %}>
-                        {{ vcf_file_error }}
-                    </p>
+                        {{ form.vcf_file.errors }}
+                        {{ form.vcf_file.label_tag }}
+                        {{ form.vcf_file }}
+                        <p {% if vcf_file_error %} {% endif %}>
+                            {{ vcf_file_error }}
+                        </p>
 
-                    {{ form.tab_file.errors }}
-                    {{ form.tab_file.label_tag }}
-                    {{ form.tab_file }}
-                    <p {% if tab_file_error %} {% endif %}>
-                        {{ tab_file_error }}
-                    </p>
-                    <p id="upload_error" style="padding-top: 10px" {% if file_upload_error %} {% endif %}>
-                        {{ file_upload_error }}
-                    </p>
+                        {{ form.tab_file.errors }}
+                        {{ form.tab_file.label_tag }}
+                        {{ form.tab_file }}
+                        <p {% if tab_file_error %} {% endif %}>
+                            {{ tab_file_error }}
+                        </p>
+                        <p id="upload_error" style="padding-top: 10px" {% if file_upload_error %} {% endif %}>
+                            {{ file_upload_error }}
+                        </p>
+                    </div>
+                    <div class="col-md-6" style="padding-top: 20px; padding-bottom: 15px" {% if file_upload_rule %}{% endif %}>
+                        {% for rule in file_upload_rule%}
+                        <p class="text-info" style="padding-left: 10px">{{ rule }}</p>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="col-md-6" style="padding-top: 20px; padding-bottom: 15px" {% if file_upload_rule %}{% endif %}>
-                    {% for rule in file_upload_rule%}
-                    <p class="text-info" style="padding-left: 10px">{{ rule }}</p>
-                    {% endfor %}
-                </div>
-            </div>
-            <div>
-                <div id="upload_success">
-                    <p  {% if file_upload_success %} {% endif %}>
-                        {{ file_upload_success }}
-                    </p>
-                </div>
+                <div>
+                    <div id="upload_success">
+                        <p  {% if file_upload_success %} {% endif %}>
+                            {{ file_upload_success }}
+                        </p>
+                    </div>
 
-                <div style="padding-top: 10px">
-                    {{ form.organism.errors }}
-                    {{ form.organism.label_tag }}
-                    {{ form.organism }}
+                    <div style="padding-top: 10px">
+                        {{ form.organism.errors }}
+                        {{ form.organism.label_tag }}
+                        {{ form.organism }}
+                    </div>
+                    <div style="padding-top: 10px">
+                        {{ form.modification.errors }}
+                        {{ form.modification.label_tag }}
+                        {{ form.modification }}
+                    </div>
+                    <div style="padding-top: 10px">
+                        {{ form.cancer.errors }}
+                        {{ form.cancer.label_tag }}
+                        {{ form.cancer }}
+                    </div>
+                    <div style="padding-top: 10px">
+                        {{ form.threshold.errors }}
+                        {{ form.threshold.label_tag }}
+                        {{ form.threshold }}
+                    </div>
+                    <div style="padding-top: 10px">
+                        {{ form.email.errors }}
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
                 </div>
-                <div style="padding-top: 10px">
-                    {{ form.modification.errors }}
-                    {{ form.modification.label_tag }}
-                    {{ form.modification }}
-                </div>
-                <div style="padding-top: 10px">
-                    {{ form.cancer.errors }}
-                    {{ form.cancer.label_tag }}
-                    {{ form.cancer }}
-                </div>
-                <div style="padding-top: 10px">
-                    {{ form.threshold.errors }}
-                    {{ form.threshold.label_tag }}
-                    {{ form.threshold }}
-                </div>
-                <div style="padding-top: 10px">
-                    {{ form.email.errors }}
-                    {{ form.email.label_tag }}
-                    {{ form.email }}
-                </div>
-            </div>
-                <input id="upload_file" class="btn btn-primary" type="submit" value="upload file" onclick="upload()" />
-        </form>
-    </div>
-
-    <!------- 如果上传成功会有提示长传成功并开始运算 ---------------->
-    <div  {% if upload_success %}{% endif %}>
-        {{ upload_success }}
-    </div>
-    <br />
-    <br />
-    <div class="col-sm-9">
-        <div>
-            <h3 class="glyphicon glyphicon-time"><strong>History Tasks</strong></h3>
+                    <input id="upload_file" class="btn btn-primary" type="submit" value="upload file" onclick="upload()" />
+            </form>
         </div>
-        <button id="del_history" class="btn btn-success glyphicon glyphicon-trash" style="margin-bottom: 10px">Clear</button>
-        <table class="table table-bordered table-hover table-responsive"  {% if user_history %}{% endif %}>
-        <thead>
-            <tr class="info">
-                <th class="col-sm-3">upload time</th>
-                <th class="col-sm-3">task status</th>
-                <th class="col-sm-3">detail</th>
-            </tr>
-        </thead>
-        <tbody id="history_record">
-            {% for k, v in user_history.items %}
-            <tr>
 
-                {% if v == "error" %}
-                <td class="danger">{{ k }}</td>
-                <td class="danger">{{ v }}</td>
-                <td class="danger"><a type="button" class="btn btn-danger" href="/get_result/{{ k }}view_history{{ v }}/" target="_blank">View</a></td>
-                {% endif %}
-                {% if v != "error" %}
-                <td>{{ k }}</td>
-                <td>{{ v }}</td>
-                <td><a type="button" class="btn btn-primary" href="/get_result/{{ k }}view_history{{ v }}/" target="_blank">View</a></td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-        </table>
+        <!------- 如果上传成功会有提示长传成功并开始运算 ---------------->
+        <div  {% if upload_success %}{% endif %}>
+            {{ upload_success }}
+        </div>
+        <br />
+        <br />
+        <div class="col-sm-9">
+            <div>
+                <h3 class="glyphicon glyphicon-time"><strong>History Tasks</strong></h3>
+            </div>
+            <button id="del_history" class="btn btn-success glyphicon glyphicon-trash" style="margin-bottom: 10px">Clear</button>
+            <table class="table table-bordered table-hover table-responsive"  {% if user_history %}{% endif %}>
+            <thead>
+                <tr class="info">
+                    <th class="col-sm-3">upload time</th>
+                    <th class="col-sm-3">task status</th>
+                    <th class="col-sm-3">detail</th>
+                </tr>
+            </thead>
+            <tbody id="history_record">
+                {% for k, v in user_history.items %}
+                <tr>
+
+                    {% if v == "error" %}
+                    <td class="danger">{{ k }}</td>
+                    <td class="danger">{{ v }}</td>
+                    <td class="danger"><a type="button" class="btn btn-danger" href="/get_result/{{ k }}view_history{{ v }}/" target="_blank">View</a></td>
+                    {% endif %}
+                    {% if v != "error" %}
+                    <td>{{ k }}</td>
+                    <td>{{ v }}</td>
+                    <td><a type="button" class="btn btn-primary" href="/get_result/{{ k }}view_history{{ v }}/" target="_blank">View</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
     </div>
-</div>
-<footer class="footer" style="padding-top: 10px"></footer>
-</body>
-<script type="text/javascript">
+{% endblock %}
+
+{% block website_script %}
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -299,8 +281,5 @@
         })
     });
 
-{#    $(".footer").load("../static/html/footer.html");#}
-{#    $(".header").load("../static/html/header.html");#}
-
-</script>
+{% endblock %}
 </html>

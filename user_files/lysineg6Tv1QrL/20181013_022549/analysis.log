@@ -1,0 +1,10 @@
+2018-10-13 10:25:49,106 - root - test_result_elm2 - DEBUG : True
+2018-10-13 10:25:49,106 - root - test_result_elm2 - DEBUG : False
+2018-10-13 10:25:49,107 - root - test_result_elm2 - DEBUG : False
+2018-10-13 10:25:49,107 - root - test_result_elm2 - DEBUG : ['Acethylation']
+2018-10-13 10:25:49,107 - root - test_result_elm2 - DEBUG : human
+2018-10-13 10:25:49,107 - root - test_result_elm2 - DEBUG : h
+2018-10-13 10:25:49,107 - root - test_result_elm2 - DEBUG : ['BRCA']
+2018-10-13 10:25:49,107 - root - test_result_elm2 - DEBUG : None
+2018-10-13 10:25:49,108 - root - test_result_elm2 - DEBUG : only analysis elm file
+2018-10-13 10:25:54,604 - root - test_result_elm2 - DEBUG : analysis complete.

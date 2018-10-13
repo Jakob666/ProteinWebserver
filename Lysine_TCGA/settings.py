@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'showResult.apps.ShowresultConfig',
     'download.apps.DownloadConfig',
     'user_history.apps.UserHistoryConfig',
+    'general.apps.GeneralConfig',
     'crispy_forms',
 ]
 
