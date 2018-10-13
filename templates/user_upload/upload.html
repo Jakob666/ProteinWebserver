@@ -118,10 +118,15 @@
                     <td class="danger">{{ v }}</td>
                     <td class="danger"><a type="button" class="btn btn-danger" href="/get_result/{{ k }}view_history{{ v }}/" target="_blank">View</a></td>
                     {% endif %}
-                    {% if v != "error" %}
+                    {% if v == "completed" %}
                     <td>{{ k }}</td>
                     <td>{{ v }}</td>
                     <td><a type="button" class="btn btn-primary" href="/get_result/{{ k }}view_history{{ v }}/" target="_blank">View</a></td>
+                    {% endif %}
+                    {% if v == "running" %}
+                    <td>{{ k }}</td>
+                    <td>{{ v }}</td>
+                    <td><a type="button" class="btn btn-primary" disabled="disabled">View</a></td>
                     {% endif %}
                 </tr>
                 {% endfor %}
@@ -282,4 +287,3 @@
     });
 
 {% endblock %}
-</html>
