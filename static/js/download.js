@@ -11,7 +11,7 @@ function latest_download() {
 function history_download() {
     var username = get_uname();
     var submit_time = $("#submit_time").text();
-    submit_time = submit_time.split("\s");
+    submit_time = submit_time.substring(0, 10) + "-" + submit_time.substring(11);
     console.log(submit_time);
     var target_url = "/user_download/" + submit_time + "/" + username + "/history_download/";
     console.log(target_url);
