@@ -1,13 +1,14 @@
 # -*- coding:utf-8 -*-
 # 这里使用StreamingHTTPResponse的目的是发送文件流
 from django.http import StreamingHttpResponse
+from user_upload.models import UserFile
 from .CONFIG import users_dir
 import json
 import os
 
 
 # Create your views here.
-def download_result(request, username):
+def download_latest_result(request, username):
     # 通过用户名得到用户最新上传的文件的目录
     files = os.listdir(os.path.join(users_dir, username))
     files.remove("upload.log")
@@ -51,5 +52,11 @@ def download_result(request, username):
     response["Content-Disposition"] = 'attachment;filename="{0}"'.format(download_filename)
 
     return response
+
+
+def history_download(request, username, submit_time):
+    print(submit_time)
+    # history_dir = UserFile.objects.get()
+
 
 

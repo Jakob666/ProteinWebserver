@@ -1,16 +1,21 @@
 {% extends "header_and_footer.html" %}
 {% block title %}History Result{% endblock %}
+{% block other_js %}
+    <script src="/static/js/get_username.js"></script>
+    <script src="/static/js/back2webserver.js"></script>
+    <script src="/static/js/download.js"></script>
+{% endblock %}
 {% block content %}
     <div class="container">
         <h2>Lysine TCGA</h2>
         <!----------- 这里可以换成 div ---------------->
         <div>
             <p><b>user:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if user_name %}{% endif %}><b>{{ user_name }}</b></span></p>
-            <p><b>submit time:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if submit_time %}{% endif %}><b>{{ submit_time }}</b></span></p>
+            <p><b>submit time:</b>&nbsp;&nbsp;<span id="submit_time" style="color: darkblue" {% if submit_time %}{% endif %}><b>{{ submit_time }}</b></span></p>
             <p><b>status:</b>&nbsp;&nbsp;<b><span id="task_status" style="color: darkblue" {% if status %}{% endif %}>{{ status }}</span></b>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="download_result" class="btn btn-default" disabled="disabled">download</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="back_to_server" class="btn btn-default">back</button>
+                <button id="download_result" class="btn btn-default" disabled="disabled" onclick="history_download()">download</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="back_to_server" class="btn btn-default" onclick="backToServer()">back</button>
             </p>
         </div>
         <div>
@@ -77,17 +82,6 @@
 {% endblock %}
 {% block scripts %}
     <script>
-        $("#back_to_server").click(function () {
-            window.location.href="/webserver/user_upload/";
-        });
-
-        $("#download_result").click(function () {
-            var username = get_uname();
-            console.log(username);
-            var target_url = "/user_download/"+username+"/download/";
-            console.log(target_url);
-            window.location.href= target_url;
-        });
 
         var load = true;
         if (load){

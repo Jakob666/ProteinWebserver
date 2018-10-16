@@ -1,5 +1,13 @@
 {% extends "header_and_footer.html" %}
 {% block title %}Test Result{% endblock %}
+{% block other_js %}
+    <script src="/static/js/get_username.js"></script>
+    <script src="/static/js/checklog.js"></script>
+    <script src="/static/js/load_result.js"></script>
+    <script src="/static/js/vivid_figure.js"></script>
+    <script src="/static/js/download.js"></script>
+    <script src="/static/js/back2webserver.js"></script>
+{% endblock %}
 {% block content %}
     <div class="container">
         <h2>Lysine TCGA</h2>
@@ -9,8 +17,8 @@
             <p><b>submit time:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if submit_time %}{% endif %}><b>{{ submit_time }}</b></span></p>
             <p><b>status:</b>&nbsp;&nbsp;<b><span id="task_status" style="color: darkblue" {% if status %}{% endif %}>{{ status }}</span></b>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="download_result" class="btn btn-default">download</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="back_to_server" class="btn btn-default">back</button>
+                <button id="download_result" class="btn btn-default" onclick="latest_download()">download</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="back_to_server" class="btn btn-default" onclick="backToServer()">back</button>
             </p>
         </div>
         <div>
@@ -73,152 +81,9 @@
 {% endblock %}
 {% block scripts %}
     <script>
-        // 定义一个方法用于获取cookie中的用户名
-        function get_uname(){
-            var cook_info = document.cookie;
-            cook_info = cook_info.split(";");
-            var username;
-            // 首先从cookie中获取用户名
-            for (var i = 0; i < cook_info.length; i++) {
-                var info = cook_info[i].trim().split("=");
-                if (info[0] == "cname") {
-                    username = info[2].split('"')[0];
-                    console.log(username);
-                }
-            }
-            return username;
-        }
-
-         // 定义一个读取日志的方法，检测是否分析成功，成功返回true；不成功返回false
-        function readLog() {
-            var username = get_uname();
-            $.ajax({
-                type: "post",
-                url: "/check_log/log_res/",
-                dataType: "json",
-                data: {"username": username},
-                async: true,
-                success: function (ret) {
-                    running_img_vanish();
-                    $("#task_status").text("finished");
-                    loading_appear();
-                    console.log("日志查询成功");
-                    obj.if_check = ret.log_result;
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(XMLHttpRequest.status);
-                    console.log(XMLHttpRequest.readyState);
-                    console.log(textStatus);
-                    console.log("日志查询失败");
-                    obj.if_check = false;
-                }
-            });
-        }
-
-        // 动态的running GIF图片消失
-        function running_img_vanish() {
-            $("#processing_img").css("visibility", "hidden");
-            $("#processing_img").hide("slow");
-        }
-
-        // 在最终结果加载出来之前loading GIF显现
-        function loading_appear(){
-            $("#wait_loading").css("visibility", "visible");
-        }
-
-        // 在最终结果加载出来之前loading GIF显现
-        function loading_vanish(){
-            $("#wait_loading").hide("fast");
-        }
-
-        // 分析成功后现实表格并加载结果文件
-        function table_appear() {
-            $("#result_table").css("visibility", "visible");
-        }
-        function summary_appear() {
-            $("#summary_table").css("visibility", "visible");
-        }
-
-        function load_analysis_result() {
-            var username = get_uname();
-            $.ajax({
-                type: "post",
-                url: "/get_result/load_result/",
-                dataType: "json",
-                data: {"username": username},
-                async: false,
-                success: function (ret) {
-                    table_appear();
-                    summary_appear();
-                    loading_vanish();
-                    var row = ret.row_num;
-                    var data = ret.test_result;
-                    var summary = ret.summary;
-                    var detail_info = document.getElementById("table_body");
-                    var summary_info = document.getElementById("summary_tbody");
-
-                    // 将表格内容清空，仅留下表头
-                    $("#table_body").empty();
-                    for (var i = 0; i < row; i++){
-                        var tr = document.createElement("tr");
-                        for (var j = 0; j < 7; j++){
-                            var td = document.createElement("td");
-                            td.innerHTML = data[i][j];
-                            tr.appendChild(td);
-                        }
-                        detail_info.appendChild(tr);
-                    }
-                    $("#result_table").append(detail_info);
-
-                    $("#summary_tbody").empty();
-                    for (var i = 0; i < summary.length; i++){
-                        var tr = document.createElement("tr");
-                        for (var j = 0; j < 5; j++){
-                            var td = document.createElement("td");
-                            td.innerHTML = summary[i][j];
-                            tr.appendChild(td);
-                        }
-                        summary_info.appendChild(tr);
-                    }
-                    $("#summary_table").append(summary_info);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(XMLHttpRequest.status);
-                    console.log(XMLHttpRequest.readyState);
-                    console.log(textStatus);
-                    console.log("加载分析结果失败");
-                }
-            })
-        }
-
-        // 如果分析失败，查看日志得到失败原因
-        function load_fail_result() {
-            var username = get_uname();
-            $.ajax({
-                type: "post",
-                url: "/get_result/check_reason/",
-                dataType: "json",
-                data: {"username": username},
-                async: false,
-                success: function (ret) {
-                    var reason = ret.fail_reason;
-                    loading_vanish();
-                    $("#fail_reason").css("visibility", "visible");
-                    $("#fail_reason p").text(reason);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(XMLHttpRequest.status);
-                    console.log(XMLHttpRequest.readyState);
-                    console.log(textStatus);
-                    console.log("加载出错日志失败");
-                }
-            })
-        }
-
-
         var obj = {};
         obj.if_check = null;
-        //用于监听if_upload的值
+        //用于监听if_check的值
         Object.defineProperty(obj, 'if_check',{
             get:function(){
                 return if_check;
@@ -237,18 +102,6 @@
 
             var has_result = readLog();
         }
-
-        $("#back_to_server").click(function () {
-            window.location.href="/webserver/user_upload/";
-        })
-
-        $("#download_result").click(function () {
-            var username = get_uname();
-            console.log(username);
-            var target_url = "/user_download/"+username+"/download/";
-            console.log(target_url);
-            window.location.href= target_url;
-        })
     </script>
 
 {% endblock %}
