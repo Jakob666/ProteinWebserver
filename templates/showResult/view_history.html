@@ -75,27 +75,29 @@
         </div>
     </div>
 {% endblock %}
-{% block website_script %}
-    $("#back_to_server").click(function () {
-        window.location.href="/webserver/user_upload/";
-    });
+{% block scripts %}
+    <script>
+        $("#back_to_server").click(function () {
+            window.location.href="/webserver/user_upload/";
+        });
 
-    $("#download_result").click(function () {
-        var username = get_uname();
-        console.log(username);
-        var target_url = "/user_download/"+username+"/download/";
-        console.log(target_url);
-        window.location.href= target_url;
-    });
+        $("#download_result").click(function () {
+            var username = get_uname();
+            console.log(username);
+            var target_url = "/user_download/"+username+"/download/";
+            console.log(target_url);
+            window.location.href= target_url;
+        });
 
-    var load = true;
-    if (load){
-        var tableObj = document.getElementById("result_table_body").rows[0];
-        if (tableObj != null){
-            $("#result_table").css("visibility", "visible");
-            $("#summary_table").css("visibility", "visible");
-            $("#download_result").removeAttr("disabled");
-            load = false;
+        var load = true;
+        if (load){
+            var tableObj = document.getElementById("result_table_body").rows[0];
+            if (tableObj != null){
+                $("#result_table").css("visibility", "visible");
+                $("#summary_table").css("visibility", "visible");
+                $("#download_result").removeAttr("disabled");
+                load = false;
+            }
         }
-    }
+    </script>
 {% endblock %}

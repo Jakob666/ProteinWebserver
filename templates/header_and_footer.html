@@ -71,9 +71,8 @@
         </footer>
 
         <!-- 页面javascript部分 -->
+        {% block scripts %}{% endblock %}
         <script>
-            {% block website_script %}
-            {% endblock %}
 
             if ($('#back-to-top').length) {
             var scrollTrigger = 100, // px

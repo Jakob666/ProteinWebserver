@@ -136,154 +136,156 @@
     </div>
 {% endblock %}
 
-{% block website_script %}
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie != '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
+{% block scripts %}
+    <script>
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
 
-                if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
 
-    function csrfSafeMethod(method) {
-        // 指定这些方法不需要 CSRF 保护
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-        var csrftoken = getCookie('csrftoken');
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
+        function csrfSafeMethod(method) {
+            // 指定这些方法不需要 CSRF 保护
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
         }
-    });
 
-    var obj = {};
-    obj.if_upload = null;
-    //用于监听if_upload的值
-    Object.defineProperty(obj, 'if_upload',{
-        get:function(){
-            return if_upload;
-        },
-        set:function (newValue) {
-            if_upload = newValue;
-            if (!newValue){
-                console.log("上传失败，没跳转页面")
-            }
-        }
-    });
-
-    function upload() {
-        var input_text = $('#id_input_text').val();
-        var elm_file = $('#id_elm_file')[0].files[0];
-        var vcf_file = $('#id_vcf_file')[0].files[0];
-        var tab_file = $('#id_tab_file')[0].files[0];
-        var organism = $('#id_organism').val();
-        var cancer = $('#id_cancer').val();
-        var threshold = $('#id_threshold').val();
-        var email = $('#id_email').val();
-        var modification = $('#id_modification').val();
-
-        $.ajax({
-            method: "post",
-            url: "/webserver/user_upload/",
-            processData: false,
-            data: {"input_text": input_text, "elm_file": elm_file, "vcf_file": vcf_file,
-                   "tab_file": tab_file, "modification": modification, "cancer": cancer,
-                   "threshold": threshold, "email": email, "organism": organism
-            },
-            async: true,
-            success: function () {
-              console.log("上传完成");
-              obj.if_upload = true;
-            },
-            error:function (r1) {
-                // 请求失败，if_upload变量的值为false
-                obj.if_upload = false;
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+            var csrftoken = getCookie('csrftoken');
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
             }
         });
-    }
 
-
-    $("#elm_example").click(function () {
-        $("#id_input_text").val("");
-        showExample($("#elm_example").val());
-    });
-    $("#vcf_example").click(function () {
-        $("#id_input_text").val("");
-        showExample($("#vcf_example").val())
-    });
-    $("#tab_example").click(function () {
-        $("#id_input_text").val("");
-        showExample($("#tab_example").val())
-    });
-    $("#clear_all").click(function () {
-        $("#id_input_text").val("");
-    });
-
-    function showExample(exampleType) {
-        $.ajax({
-            type: "post",
-            url: "/get_example/",
-            data: {"exampleType": exampleType},
-            asyns: false,
-            success: function (ret) {
-                $("#id_input_text").val(ret);
+        var obj = {};
+        obj.if_upload = null;
+        //用于监听if_upload的值
+        Object.defineProperty(obj, 'if_upload',{
+            get:function(){
+                return if_upload;
             },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(XMLHttpRequest.status);
-                console.log(XMLHttpRequest.readyState);
-                console.log(textStatus);
-                console.log(errorThrown);
-                console.log("样例文件导出失败");
+            set:function (newValue) {
+                if_upload = newValue;
+                if (!newValue){
+                    console.log("上传失败，没跳转页面")
+                }
             }
         });
-    }
 
-    // 定义一个方法用于获取cookie中的用户名
-    function get_uname(){
-        var cook_info = document.cookie;
-        cook_info = cook_info.split(";");
-        var username;
-        // 首先从cookie中获取用户名
-        for (var i = 0; i < cook_info.length; i++) {
-            var info = cook_info[i].trim().split("=");
-            if (info[0] == "cname") {
-                username = info[2].split('"')[0];
-                console.log(username);
-            }
+        function upload() {
+            var input_text = $('#id_input_text').val();
+            var elm_file = $('#id_elm_file')[0].files[0];
+            var vcf_file = $('#id_vcf_file')[0].files[0];
+            var tab_file = $('#id_tab_file')[0].files[0];
+            var organism = $('#id_organism').val();
+            var cancer = $('#id_cancer').val();
+            var threshold = $('#id_threshold').val();
+            var email = $('#id_email').val();
+            var modification = $('#id_modification').val();
+
+            $.ajax({
+                method: "post",
+                url: "/webserver/user_upload/",
+                processData: false,
+                data: {"input_text": input_text, "elm_file": elm_file, "vcf_file": vcf_file,
+                       "tab_file": tab_file, "modification": modification, "cancer": cancer,
+                       "threshold": threshold, "email": email, "organism": organism
+                },
+                async: true,
+                success: function () {
+                  console.log("上传完成");
+                  obj.if_upload = true;
+                },
+                error:function (r1) {
+                    // 请求失败，if_upload变量的值为false
+                    obj.if_upload = false;
+                }
+            });
         }
-        return username;
-    }
 
-    $("#del_history").click(function () {
-        $("#history_record").empty();
-        var username = get_uname();
-        $.ajax({
-            type: "post",
-            url: "/user_history/del_history/",
-            data: {"username": username},
-            async: true,
-            success: function () {
-                console.log("删除用户历史任务记录");
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(XMLHttpRequest.status);
-                console.log(XMLHttpRequest.readyState);
-                console.log(textStatus);
-                console.log(errorThrown);
-                console.log("历史任务删除失败");
+
+        $("#elm_example").click(function () {
+            $("#id_input_text").val("");
+            showExample($("#elm_example").val());
+        });
+        $("#vcf_example").click(function () {
+            $("#id_input_text").val("");
+            showExample($("#vcf_example").val())
+        });
+        $("#tab_example").click(function () {
+            $("#id_input_text").val("");
+            showExample($("#tab_example").val())
+        });
+        $("#clear_all").click(function () {
+            $("#id_input_text").val("");
+        });
+
+        function showExample(exampleType) {
+            $.ajax({
+                type: "post",
+                url: "/get_example/",
+                data: {"exampleType": exampleType},
+                asyns: false,
+                success: function (ret) {
+                    $("#id_input_text").val(ret);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.status);
+                    console.log(XMLHttpRequest.readyState);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    console.log("样例文件导出失败");
+                }
+            });
+        }
+
+        // 定义一个方法用于获取cookie中的用户名
+        function get_uname(){
+            var cook_info = document.cookie;
+            cook_info = cook_info.split(";");
+            var username;
+            // 首先从cookie中获取用户名
+            for (var i = 0; i < cook_info.length; i++) {
+                var info = cook_info[i].trim().split("=");
+                if (info[0] == "cname") {
+                    username = info[2].split('"')[0];
+                    console.log(username);
+                }
             }
-        })
-    });
+            return username;
+        }
 
+        $("#del_history").click(function () {
+            $("#history_record").empty();
+            var username = get_uname();
+            $.ajax({
+                type: "post",
+                url: "/user_history/del_history/",
+                data: {"username": username},
+                async: true,
+                success: function () {
+                    console.log("删除用户历史任务记录");
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.status);
+                    console.log(XMLHttpRequest.readyState);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    console.log("历史任务删除失败");
+                }
+            })
+        });
+
+    </script>
 {% endblock %}

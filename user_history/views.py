@@ -4,6 +4,7 @@ from .CONFIG import user_files
 import os
 import shutil
 from user_upload.models import UserFile
+from dwebsocket.decorators import accept_websocket
 
 
 # Create your views here.
@@ -22,4 +23,11 @@ def del_user_history(request):
     shutil.rmtree(user_dir)
     os.system("mkdir %s" % user_dir)
     return None
+
+
+# 提交页面如果有running状态的history task就会websocket实时更新
+# @accept_websocket
+# def update_still_running_task(request):
+#     if request.is_websocket():
+
 

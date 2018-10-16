@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'user_history.apps.UserHistoryConfig',
     'general.apps.GeneralConfig',
     'crispy_forms',
+    'channels',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
