@@ -1,0 +1,10 @@
+2018-10-03 12:09:37,614 - root - test_result_elm2 - DEBUG : False
+2018-10-03 12:09:37,614 - root - test_result_elm2 - DEBUG : True
+2018-10-03 12:09:37,615 - root - test_result_elm2 - DEBUG : False
+2018-10-03 12:09:37,617 - root - test_result_elm2 - DEBUG : Acethylation
+2018-10-03 12:09:37,617 - root - test_result_elm2 - DEBUG : human
+2018-10-03 12:09:37,617 - root - test_result_elm2 - DEBUG : BRCA
+2018-10-03 12:09:37,618 - root - test_result_elm2 - DEBUG : analysis vcf file and ticjed modifications
+2018-10-03 12:09:37,621 - root - annotate_for_vcf_and_tab - DEBUG : vcf to avinput, done
+2018-10-03 12:09:39,939 - root - annotate_for_vcf_and_tab - ERROR : annovar error.
+2018-10-03 12:10:03,442 - root - annotate_for_vcf_and_tab - ERROR : analysis interrupted

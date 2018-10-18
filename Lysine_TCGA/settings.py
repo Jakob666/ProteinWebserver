@@ -45,7 +45,15 @@ INSTALLED_APPS = [
     'user_upload.apps.UserUploadConfig',
     'log_checker.apps.LogCheckerConfig',
     'getExample.apps.GetexampleConfig',
+    'showResult.apps.ShowresultConfig',
+    'download.apps.DownloadConfig',
+    'user_history.apps.UserHistoryConfig',
+    'general.apps.GeneralConfig',
+    'crispy_forms',
+    'channels',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -128,9 +136,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
-)
+]
 
 LOGGING = {
     "disable_existing_loggers": False,

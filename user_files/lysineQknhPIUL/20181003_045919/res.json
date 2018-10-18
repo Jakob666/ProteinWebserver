@@ -1,0 +1,42 @@
+{
+    "cancer": "BRCA",
+    "test_res": {
+        "Q99570": {
+            "significance": true,
+            "p_value": "0.00000E+00",
+            "motif_length": 15.0,
+            "background_length": 1343.0,
+            "background_mutation": [
+                [
+                    "BRCA",
+                    "Q99570",
+                    921.0,
+                    "I",
+                    "L",
+                    "'TCGA-AN-A046'",
+                    1
+                ],
+                [
+                    "BRCA",
+                    "Q99570",
+                    1186.0,
+                    "R",
+                    "Q",
+                    "'TCGA-AN-A046'",
+                    1
+                ]
+            ],
+            "motif_mutation": [
+                [
+                    "BRCA",
+                    "Q99570",
+                    779.0,
+                    "M",
+                    "I",
+                    "'TCGA-B6-A400'",
+                    1
+                ]
+            ]
+        }
+    }
+}

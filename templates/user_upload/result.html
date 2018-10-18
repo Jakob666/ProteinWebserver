@@ -1,0 +1,107 @@
+{% extends "header_and_footer.html" %}
+{% block title %}Test Result{% endblock %}
+{% block other_js %}
+    <script src="/static/js/get_username.js"></script>
+    <script src="/static/js/checklog.js"></script>
+    <script src="/static/js/load_result.js"></script>
+    <script src="/static/js/vivid_figure.js"></script>
+    <script src="/static/js/download.js"></script>
+    <script src="/static/js/back2webserver.js"></script>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h2>Lysine TCGA</h2>
+        <!----------- 这里可以换成 div ---------------->
+        <div>
+            <p><b>user:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if user_name %}{% endif %}><b>{{ user_name }}</b></span></p>
+            <p><b>submit time:</b>&nbsp;&nbsp;<span style="color: darkblue" {% if submit_time %}{% endif %}><b>{{ submit_time }}</b></span></p>
+            <p><b>status:</b>&nbsp;&nbsp;<b><span id="task_status" style="color: darkblue" {% if status %}{% endif %}>{{ status }}</span></b>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="download_result" class="btn btn-default" onclick="latest_download()">download</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="back_to_server" class="btn btn-default" onclick="backToServer()">back</button>
+            </p>
+        </div>
+        <div>
+            <img id="processing_img" style="height: 150px; padding-left: 80px; visibility: visible" src="/static/img/running.gif">
+        </div>
+        <!------------------------------------------->
+        <div>
+        <table id="result_table" style="visibility: hidden" class="table table-responsive table-bordered table-hover" {% if test_result %}{% endif %}>
+        <thead>
+            <tr class="info">
+                <th>Cancer Type</th>
+                <th>Uniprot Accession</th>
+                <th>Position</th>
+                <th>Location</th>
+                <th>From</th>
+                <th>To</th>
+                <th>TCGA Patient ID</th>
+            </tr>
+        </thead>
+        <tbody id="table_body">
+            {% for v in test_result %}
+                <!---- v是列表，django的template中只能这种形式表示，一般python中索引会报错 ---->
+                <tr>
+                    <td>{{ v.0 }}</td>
+                    <td>{{ v.1 }}</td>
+                    <td>{{ v.2 }}</td>
+                    <td>{{ v.3 }}</td>
+                    <td>{{ v.4 }}</td>
+                    <td>{{ v.5 }}</td>
+                    <td>{{ v.6 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        </div>
+        <div style="padding-top: 20px">
+        <table id="summary_table" style="visibility: hidden" class="table table-bordered table-responsive table-hover">
+            <thead>
+            <tr class="info">
+                <th>Uniport Accession</th>
+                <th>Motif length</th>
+                <th>Background length</th>
+                <th>Significant</th>
+                <th>FDR</th>
+            </tr>
+            </thead>
+            <tbody id="summary_tbody"></tbody>
+        </table>
+        </div>
+        <div id="fail_reason" style="visibility: hidden">
+            <p style="padding-left: 30px;"><b></b></p>
+        </div>
+        <div>
+            <img id="wait_loading" style="height: 230px; padding-left: 80px; visibility: hidden" src="/static/img/loading.gif">
+        </div>
+        <div id="visulize" {% if visulize %}{% endif %}>
+            <img src="{{ visulize }}">
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        var obj = {};
+        obj.if_check = null;
+        //用于监听if_check的值
+        Object.defineProperty(obj, 'if_check',{
+            get:function(){
+                return if_check;
+            },
+            set:function (newValue) {
+                if_check = newValue;
+                if (newValue){
+                    load_analysis_result();
+                }else{
+                    load_fail_result();
+                }
+            }
+        });
+        var process = true;
+        if (process){
+
+            var has_result = readLog();
+        }
+    </script>
+
+{% endblock %}

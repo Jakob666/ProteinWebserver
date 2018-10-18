@@ -21,5 +21,9 @@ urlpatterns = [
     url(r'^test/', include("human_cancer_pro.urls")),
     url(r'^webserver/', include("user_upload.urls")),
     url(r'^check_log/', include("log_checker.urls")),
-    url(r'^get_example/', include("getExample.urls"))
+    url(r'^get_example/', include("getExample.urls")),
+    url(r'^get_result/', include("showResult.urls")),
+    url(r'^user_download/', include("download.urls")),
+    url(r'^user_history/', include("user_history.urls")),
+    url(r'^general/', include("general.urls")),
 ]

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+        {% load staticfiles %}
+        {% load crispy_forms_tags %}
+        <link rel="stylesheet" href="/static/css/bootstrap.css">
+        <link rel="stylesheet" href="/static/css/bootstrap-table.css">
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+        <!-- 加载其他CSS -->
+        {% block other_css %}{% endblock %}
+        <script type="text/javascript" src="/static/js/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="/static/js/jquery.form.js"></script>
+        <script type="text/javascript" src="/static/js/jquery-3.1.1.js"></script>
+        <script src="/static/js/bootstrap.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/bootstrap-table.js"></script>
+        <!-- 加载其他js -->
+        {% block other_js %}{% endblock %}
+        {% block other_style %}{% endblock %}
+    </head>
+    <body>
+        <!-- 导航栏部分 -->
+        <nav class="navbar navbar-inverse" role="navigation">
+            <div class="container-fluid">
+                <div class="nav-header">
+                    <a class="navbar-brand">Lysine TCGA</a>
+                </div>
+                <div>
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="/general/index/">Home</a></li>
+                        <li><a href="/webserver/user_upload/">Webserver</a></li>
+                        <li><a href="/general/help/">Help</a></li>
+                        <li><a href="/general/citation/">Citation</a></li>
+                        <li><a href="/general/contact_us/">Contact</a> </li>
+                        <li><a href="http://www.renlab.org/">Renlab</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 留出主体页面的接口 -->
+        {% block content %}
+        {% endblock %}
+
+        <!-- 页脚部分 -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-2"></div>
+                    <div class="col-xs-8">
+                        <p id="copyright" class="text-muted" align='center'>Lysine TCGA &copy; 2016. The Ren Lab. All Rights Reserved</p>
+
+
+                        <div class="col-xs-5">
+                            <div id="visit_history" style="width:130px;margin-right: 0px;float: right">
+                                 <!-- <script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0py7sz1xq38&amp;m=0&amp;c=ff0000&amp;cr1=ffffff&amp;sx=0" async="async"></script> -->
+                            </div>
+                        </div>
+                        <div class="col-xs-7">
+                            <!-- <script type="text/javascript" src="//ra.revolvermaps.com/0/0/0.js?i=0322ugj9x9u&amp;d=3&amp;p=1&amp;b=0&amp;w=268&amp;g=2&amp;f=arial&amp;fs=14&amp;r=0&amp;c0=362b05&amp;c1=375363&amp;c2=000000&amp;ic0=0&amp;ic1=0" async="async"></script> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-2"></div>
+
+
+                <a href="#" id="back-to-top" title="Back to top"></a>
+            </div>
+        </footer>
+
+        <!-- 页面javascript部分 -->
+        {% block scripts %}{% endblock %}
+        <script>
+
+            if ($('#back-to-top').length) {
+            var scrollTrigger = 100, // px
+                backToTop = function () {
+                    var scrollTop = $(window).scrollTop();
+                    if (scrollTop > scrollTrigger) {
+                        $('#back-to-top').addClass('show');
+                    } else {
+                        $('#back-to-top').removeClass('show');
+                    }
+                };
+            backToTop();
+            $(window).on('scroll', function () {
+                backToTop();
+            });
+            $('#back-to-top').on('click', function (e) {
+                e.preventDefault();
+                $('html,body').animate({
+                    scrollTop: 0
+                }, 700);
+            });
+        }
+            var now = new Date();
+            var y = now.getFullYear();
+            document.getElementById("copyright").innerHTML="Lysine-TCGA &copy; "+y+". The Ren Lab. All Rights Reserved";
+        </script>
+        <style>
+        .footer{
+            margin-top: 0px;
+            /*height: 70px;*/
+            padding: 10px;
+            background-color: #EFEDED;
+            font-size: 18px;
+        }
+        .text-muted{
+            margin-top: 10px;
+        }
+        #back-to-top {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 9999;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            line-height: 30px;
+            background: url("http://codyhouse.co/demo/back-to-top/img/cd-top-arrow.svg") no-repeat scroll center 50% rgba(91, 183, 91, 0.8);
+            color: #444;
+            cursor: pointer;
+            border: 0;
+            border-radius: 2px;
+            text-decoration: none;
+            transition: opacity 0.2s ease-out;
+            opacity: 0;
+        }
+        #back-to-top:hover {
+            background: url("http://codyhouse.co/demo/back-to-top/img/cd-top-arrow.svg") no-repeat scroll center #5bb75b;
+        }
+        #back-to-top.show {
+            opacity: 1;
+        }
+        #content {
+            height: 2000px;
+        }
+        </style>
+
+    </body>
+</html>

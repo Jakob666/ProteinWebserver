@@ -1,0 +1,42 @@
+{% extends "header_and_footer.html" %}
+<!-- head部分额外加载 -->
+{% block title %}Lysine TCGA Contaction{% endblock %}
+{% block other_js %}<script src="/static/js/json2.js"></script>{% endblock %}
+                
+<!-- body部分的内容 -->
+{% block content %}
+<div class="jumbotron" style="background-color:#5bb75b;margin-top:0px;color:white;">
+    <div class="container">
+        <div class="col-xs-12">
+            <h1>Contact Us</h1>
+        </div>
+    </div>
+</div>
+<div id="container" class="container">
+    <div class="col-xs-12">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 id="h1" class="page-header">Person to Contact</h1>
+                <p>If you have any questions or comments, please contact us.</p>
+                <div class="contact" style="border-left:7px solid #008000;padding-left:3%">
+                        <p><span class="name"><a href="https://www.researchgate.net/profile/Jian_Ren2/publications" target="_blank"><h2>Jian Ren</h2></a> </span><a href="mailto:renjian.sysu@gmail.com">renjian.sysu@gmail.com</a></p>
+                        <i style="font-weight:bold;font-size:18px;">Professor of Bioinformatics</i>
+                        <p>School of Life Sciences, Cancer Center, Sun Yat-sen University, Guangzhou 510060, China</p>
+                        <br>
+                        <p><span class="name"><a href="https://www.researchgate.net/profile/Zhixiang_Zuo/publications" target="_blank"><h2>Zhixiang Zuo</h2></a> </span><a href="mailto:zuozhx@sysucc.org.cn">zuozhx@sysucc.org.cn</a></p>
+                        <i style="font-weight:bold;font-size:18px;">Associate Professor of Cancer Genomics</i>
+                        <p>Cancer Center, Sun Yat-sen University, Guangzhou 510060, China</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <!-- <div class="row">
+                <div>
+                        <h1 id="h2" class="page-header">Citation</h1>
+                        <p>In progress of publishing.</p>
+                </div>
+        </div> -->
+    </div>
+</div><br><br><br><br>
+{% endblock %}

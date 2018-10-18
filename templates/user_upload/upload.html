@@ -1,257 +1,298 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Lysine TCGA Web Server</title>
-    {% load static %}
-    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
-</head>
-<body>
-{#action={% url "user_upload:user_upload" %} #}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div>
-            {{ form.input_text.errors }}
-            {{ form.input_text.label_tag }}
-            {{ form.input_text }}
-            {% if input_text.error %}
-                input_text.error
-            {% endif %}
+{% extends "header_and_footer.html" %}
+{% block title %}Lysine TCGA Web Server{% endblock %}
+{% block other_js %}
+    <script src="/static/js/csrf_setup.js"></script>
+    <script src="/static/js/get_username.js"></script>
+    <script src="/static/js/upload.js"></script>
+    <script src="/static/js/del_history.js"></script>
+    <script src="/static/js/showExample.js"></script>
+{% endblock %}
+{% block content %}
+    <div class="container">
+
+        <div class="col-sm-9">
+            <form method="post" enctype="multipart/form-data" role="form" class="form-horizontal">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.input_text.errors }}
+                    {{ form.input_text.label_tag }}
+                    {{ form.input_text }}
+                    {% if input_text.error %}
+                        input_text.error
+                    {% endif %}
+                </div>
+                <div class="btn-group btn-group-lg" style="padding-left: 20px">
+                    <input id="elm_example" class="btn btn-default" type="button" value="elm exmple" />
+                    <input id="vcf_example" class="btn btn-default" type="button" value="vcf exmple" />
+                    <input id="tab_example" class="btn btn-default" type="button" value="tab exmple" />
+                    <input id="clear_all" class="btn btn-default" type="button" value="clear" />
+                </div>
+                <div>
+                    <div class="col-md-6" style="width: 350px; padding-top: 10px">
+                        {{ form.elm_file.errors }}
+                        {{ form.elm_file.label_tag }}
+                        {{ form.elm_file }}
+                        <p {% if elm_file_error %} {% endif %}>
+                            {{ elm_file_error }}
+                        </p>
+
+                        {{ form.vcf_file.errors }}
+                        {{ form.vcf_file.label_tag }}
+                        {{ form.vcf_file }}
+                        <p {% if vcf_file_error %} {% endif %}>
+                            {{ vcf_file_error }}
+                        </p>
+
+                        {{ form.tab_file.errors }}
+                        {{ form.tab_file.label_tag }}
+                        {{ form.tab_file }}
+                        <p {% if tab_file_error %} {% endif %}>
+                            {{ tab_file_error }}
+                        </p>
+                        <p id="upload_error" style="padding-top: 10px" {% if file_upload_error %} {% endif %}>
+                            {{ file_upload_error }}
+                        </p>
+                    </div>
+                    <div class="col-md-6" style="padding-top: 20px; padding-bottom: 15px" {% if file_upload_rule %}{% endif %}>
+                        {% for rule in file_upload_rule%}
+                        <p class="text-info" style="padding-left: 10px">{{ rule }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    <div id="upload_success">
+                        <p  {% if file_upload_success %} {% endif %}>
+                            {{ file_upload_success }}
+                        </p>
+                    </div>
+
+                    <div style="padding-top: 10px">
+                        {{ form.organism.errors }}
+                        {{ form.organism.label_tag }}
+                        {{ form.organism }}
+                    </div>
+                    <div style="padding-top: 10px">
+                        {{ form.modification.errors }}
+                        {{ form.modification.label_tag }}
+                        {{ form.modification }}
+                    </div>
+                    <div style="padding-top: 10px">
+                        {{ form.cancer.errors }}
+                        {{ form.cancer.label_tag }}
+                        {{ form.cancer }}
+                    </div>
+                    <div style="padding-top: 10px">
+                        {{ form.threshold.errors }}
+                        {{ form.threshold.label_tag }}
+                        {{ form.threshold }}
+                    </div>
+                    <div style="padding-top: 10px">
+                        {{ form.email.errors }}
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+                </div>
+                    <input id="upload_file" class="btn btn-primary" type="submit" value="upload file" onclick="upload()" />
+            </form>
         </div>
-        <input id="elm_example" type="button" value="elm exmple" />
-        <input id="vcf_example" type="button" value="vcf exmple" />
-        <input id="tab_example" type="button" value="tab exmple" />
-        <input id="clear_all" type="button" value="clear" />
-        <div>
-            {{ file_upload_rule }}
+
+        <!------- 如果上传成功会有提示长传成功并开始运算 ---------------->
+        <div  {% if upload_success %}{% endif %}>
+            {{ upload_success }}
         </div>
-        <div>
-            {{ form.elm_file.errors }}
-            {{ form.elm_file.label_tag }}
-            {{ form.elm_file }}
-            <p {% if elm_file_error %} {% endif %}>
-                {{ elm_file_error }}
-            </p>
+        <br />
+        <br />
+        <div class="col-sm-9">
+            <div>
+                <h3 class="glyphicon glyphicon-time"><strong>History Tasks</strong></h3>
+            </div>
+            <button id="del_history" class="btn btn-success glyphicon glyphicon-trash" style="margin-bottom: 10px" onclick="del_history()">Clear</button>
+            <table class="table table-bordered table-hover table-responsive"  {% if user_history %}{% endif %}>
+            <thead>
+                <tr class="info">
+                    <th class="col-sm-3">upload time</th>
+                    <th class="col-sm-3">task status</th>
+                    <th class="col-sm-3">detail</th>
+                </tr>
+            </thead>
+            <tbody id="history_record">
+                {% for k, v in user_history.items %}
+                <tr>
+
+                    {% if v == "error" %}
+                    <td class="danger">{{ k }}</td>
+                    <td class="danger">{{ v }}</td>
+                    <td class="danger"><a type="button" class="btn btn-danger" href="/get_result/{{ k }}view_history{{ v }}/" target="_blank">View</a></td>
+                    {% endif %}
+                    {% if v == "completed" %}
+                    <td>{{ k }}</td>
+                    <td>{{ v }}</td>
+                    <td><a type="button" class="btn btn-primary" href="/get_result/{{ k }}view_history{{ v }}/" target="_blank">View</a></td>
+                    {% endif %}
+                    {% if v == "running" %}
+                    <td>{{ k }}</td>
+                    <td>{{ v }}</td>
+                    <td><a type="button" class="btn btn-primary" disabled="disabled">View</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
         </div>
-        <div>
-            {{ form.vcf_file.errors }}
-            {{ form.vcf_file.label_tag }}
-            {{ form.vcf_file }}
-            <p {% if vcf_file_error %} {% endif %}>
-                {{ vcf_file_error }}
-            </p>
-        </div>
-        <div>
-            {{ form.tab_file.errors }}
-            {{ form.tab_file.label_tag }}
-            {{ form.tab_file }}
-            <p {% if tab_file_error %} {% endif %}>
-                {{ tab_file_error }}
-            </p>
-            <p id="upload_error" {% if file_upload_error %} {% endif %}>
-                {{ file_upload_error }}
-            </p>
-        </div>
-        <div id="upload_success">
-            <p  {% if file_upload_success %} {% endif %}>
-                {{ file_upload_success }}
-            </p>
-        </div>
-        <div>
-            {{ form.organism.errors }}
-            {{ form.organism.label_tag }}
-            {{ form.organism }}
-        </div>
-        <div>
-            {{ form.modification.errors }}
-            {{ form.modification.label_tag }}
-            {{ form.modification }}
-        </div>
-        <div>
-            {{ form.cancer.errors }}
-            {{ form.cancer.label_tag }}
-            {{ form.cancer }}
-        </div>
-        <div>
-            {{ form.threshold.errors }}
-            {{ form.threshold.label_tag }}
-            {{ form.threshold }}
-        </div>
-        <div>
-            {{ form.email.errors }}
-            {{ form.email.label_tag }}
-            {{ form.email }}
-        </div>
-        <input id="upload_file" type="submit" value="upload file" onclick="upload()" />
-    </form>
-    <!------- 如果上传成功会有提示长传成功并开始运算 ---------------->
-    <div  {% if upload_success %}{% endif %}>
-        {{ upload_success }}
     </div>
-    <br />
-    <br />
-    <table {% if cnm %} {% endif %}>
-        <tr>{{ cnm }}</tr>
-    </table>
-</body>
-<script type="text/javascript">
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie != '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
+{% endblock %}
 
-                if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
+{% block scripts %}
+    <script>
+{#        function getCookie(name) {#}
+{#            var cookieValue = null;#}
+{#            if (document.cookie && document.cookie != '') {#}
+{#                var cookies = document.cookie.split(';');#}
+{#                for (var i = 0; i < cookies.length; i++) {#}
+{#                    var cookie = jQuery.trim(cookies[i]);#}
+{##}
+{#                    if (cookie.substring(0, name.length + 1) == (name + '=')) {#}
+{#                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));#}
+{#                        break;#}
+{#                    }#}
+{#                }#}
+{#            }#}
+{#            return cookieValue;#}
+{#        }#}
 
-    function csrfSafeMethod(method) {
-        // 指定这些方法不需要 CSRF 保护
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
+{#        function csrfSafeMethod(method) {#}
+{#            // 指定这些方法不需要 CSRF 保护#}
+{#            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));#}
+{#        }#}
+{##}
+{#        $.ajaxSetup({#}
+{#            beforeSend: function(xhr, settings) {#}
+{#            var csrftoken = getCookie('csrftoken');#}
+{#            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {#}
+{#                    xhr.setRequestHeader("X-CSRFToken", csrftoken);#}
+{#                }#}
+{#            }#}
+{#        });#}
 
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-        var csrftoken = getCookie('csrftoken');
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-    });
+{#        var obj = {};#}
+{#        obj.if_upload = null;#}
+{#        //用于监听if_upload的值#}
+{#        Object.defineProperty(obj, 'if_upload',{#}
+{#            get:function(){#}
+{#                return if_upload;#}
+{#            },#}
+{#            set:function (newValue) {#}
+{#                if_upload = newValue;#}
+{#                if (!newValue){#}
+{#                    console.log("上传失败，没跳转页面")#}
+{#                }#}
+{#            }#}
+{#        });#}
 
-    var obj = {};
-    obj.if_upload = null;
-    //用于监听if_upload的值
-    Object.defineProperty(obj, 'if_upload',{
-        get:function(){
-            return if_upload;
-        },
-        set:function (newValue) {
-            if_upload = newValue;
-            console.log("set:", newValue);
-            if (newValue){
-                var has_res = readLog();
-                if (has_res){
-                    console.log("有结果");
-                }else{
-                    console.log("没有结果");
-                }
-            }
-        }
-    });
+{#        function upload() {#}
+{#            var input_text = $('#id_input_text').val();#}
+{#            var elm_file = $('#id_elm_file')[0].files[0];#}
+{#            var vcf_file = $('#id_vcf_file')[0].files[0];#}
+{#            var tab_file = $('#id_tab_file')[0].files[0];#}
+{#            var organism = $('#id_organism').val();#}
+{#            var cancer = $('#id_cancer').val();#}
+{#            var threshold = $('#id_threshold').val();#}
+{#            var email = $('#id_email').val();#}
+{#            var modification = $('#id_modification').val();#}
+{##}
+{#            $.ajax({#}
+{#                method: "post",#}
+{#                url: "/webserver/user_upload/",#}
+{#                processData: false,#}
+{#                data: {"input_text": input_text, "elm_file": elm_file, "vcf_file": vcf_file,#}
+{#                       "tab_file": tab_file, "modification": modification, "cancer": cancer,#}
+{#                       "threshold": threshold, "email": email, "organism": organism#}
+{#                },#}
+{#                async: true,#}
+{#                success: function () {#}
+{#                  console.log("上传完成");#}
+{#                  obj.if_upload = true;#}
+{#                },#}
+{#                error:function (r1) {#}
+{#                    // 请求失败，if_upload变量的值为false#}
+{#                    obj.if_upload = false;#}
+{#                }#}
+{#            });#}
+{#        }#}
 
-    function upload() {
-        var input_text = $('#id_input_text').val();
-        var elm_file = $('#id_elm_file')[0].files[0];
-        var vcf_file = $('#id_vcf_file')[0].files[0];
-        var tab_file = $('#id_tab_file')[0].files[0];
-        var organism = $('#id_organism').val();
-        var cancer = $('#id_cancer').val();
-        var threshold = $('#id_threshold').val();
-        var email = $('#id_email').val();
-        var modification = $('#id_modification').val();
 
-        $.ajax({
-            method: "post",
-            url: "/webserver/user_upload/",
-            processData: false,
-            data: {"input_text": input_text, "elm_file": elm_file, "vcf_file": vcf_file,
-                   "tab_file": tab_file, "modification": modification, "cancer": cancer,
-                   "threshold": threshold, "email": email, "organism": organism
-            },
-            async: true,
-            success: function () {
-              console.log("上传完成");
-              obj.if_upload = true;
-            },
-            error:function (r1) {
-                // 请求失败，if_upload变量的值为false
-                obj.if_upload = false;
-            }
+        $("#elm_example").click(function () {
+            $("#id_input_text").val("");
+            showExample($("#elm_example").val());
         });
-    }
-
-    // 定义一个读取日志的方法，对日志的内容进行获取并调整前端的显示
-    function readLog() {
-        var cook_info = document.cookie;
-        cook_info = cook_info.split(";");
-        var username;
-        // 首先从cookie中获取用户名
-        for (var i = 0; i < cook_info.length; i++) {
-            var info = cook_info[i].trim().split("=");
-            if (info[0] == "cname") {
-                username = info[2].split('"')[0];
-                console.log(username);
-            }
-        }
-        var has_result = null;
-        $.ajax({
-            type: "post",
-            url: "/check_log/log_res/",
-            dataType: "json",
-            data: {"username": username},
-            async: false,
-            success: function (ret) {
-                has_result = ret.log_result;
-                console.log("日志查询成功");
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-{#                console.log(XMLHttpRequest.status);#}
-{#                console.log(XMLHttpRequest.readyState);#}
-{#                console.log(textStatus);#}
-{#                console.log("日志查询失败");#}
-{#                has_result = false;#}
-            }
+        $("#vcf_example").click(function () {
+            $("#id_input_text").val("");
+            showExample($("#vcf_example").val())
         });
-        return has_result;
-    }
-
-    $("#elm_example").click(function () {
-        $("#id_input_text").val("");
-        showExample($("#elm_example").val());
-    });
-    $("#vcf_example").click(function () {
-        $("#id_input_text").val("");
-        showExample($("#vcf_example").val())
-    });
-    $("#tab_example").click(function () {
-        $("#id_input_text").val("");
-        showExample($("#tab_example").val())
-    });
-    $("#clear_all").click(function () {
-        $("#id_input_text").val();
-    });
-
-    function showExample(exampleType) {
-        $.ajax({
-            type: "post",
-            url: "/get_example/",
-            data: {"exampleType": exampleType},
-            asyns: false,
-            success: function (ret) {
-                $("#id_input_text").val(ret);
-                console.log(ret);
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(XMLHttpRequest.status);
-                console.log(XMLHttpRequest.readyState);
-                console.log(textStatus);
-                console.log(errorThrown);
-                console.log("样例文件导出失败");
-            }
+        $("#tab_example").click(function () {
+            $("#id_input_text").val("");
+            showExample($("#tab_example").val())
         });
-    }
+        $("#clear_all").click(function () {
+            $("#id_input_text").val("");
+        });
 
-    
+{#        function showExample(exampleType) {#}
+{#            $.ajax({#}
+{#                type: "post",#}
+{#                url: "/get_example/",#}
+{#                data: {"exampleType": exampleType},#}
+{#                asyns: false,#}
+{#                success: function (ret) {#}
+{#                    $("#id_input_text").val(ret);#}
+{#                },#}
+{#                error: function (XMLHttpRequest, textStatus, errorThrown) {#}
+{#                    console.log(XMLHttpRequest.status);#}
+{#                    console.log(XMLHttpRequest.readyState);#}
+{#                    console.log(textStatus);#}
+{#                    console.log(errorThrown);#}
+{#                    console.log("样例文件导出失败");#}
+{#                }#}
+{#            });#}
+{#        }#}
 
+{#        // 定义一个方法用于获取cookie中的用户名#}
+{#        function get_uname(){#}
+{#            var cook_info = document.cookie;#}
+{#            cook_info = cook_info.split(";");#}
+{#            var username;#}
+{#            // 首先从cookie中获取用户名#}
+{#            for (var i = 0; i < cook_info.length; i++) {#}
+{#                var info = cook_info[i].trim().split("=");#}
+{#                if (info[0] == "cname") {#}
+{#                    username = info[2].split('"')[0];#}
+{#                    console.log(username);#}
+{#                }#}
+{#            }#}
+{#            return username;#}
+{#        }#}
 
+{#        $("#del_history").click(function () {#}
+{#            $("#history_record").empty();#}
+{#            var username = get_uname();#}
+{#            $.ajax({#}
+{#                type: "post",#}
+{#                url: "/user_history/del_history/",#}
+{#                data: {"username": username},#}
+{#                async: true,#}
+{#                success: function () {#}
+{#                    console.log("删除用户历史任务记录");#}
+{#                },#}
+{#                error: function (XMLHttpRequest, textStatus, errorThrown) {#}
+{#                    console.log(XMLHttpRequest.status);#}
+{#                    console.log(XMLHttpRequest.readyState);#}
+{#                    console.log(textStatus);#}
+{#                    console.log(errorThrown);#}
+{#                    console.log("历史任务删除失败");#}
+{#                }#}
+{#            })#}
+{#        });#}
 
-</script>
-</html>
+    </script>
+{% endblock %}

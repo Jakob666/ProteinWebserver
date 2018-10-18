@@ -1,0 +1,7 @@
+2018-10-16 15:51:39,841 - root - user_upload - DEBUG : elm file upload completed.
+2018-10-16 15:51:39,841 - root - user_upload - DEBUG : post_modification:Acethylation
+2018-10-16 15:51:39,841 - root - user_upload - DEBUG : post_organism:human
+2018-10-16 15:51:39,841 - root - user_upload - DEBUG : post_threshold:h
+2018-10-16 15:51:39,842 - root - user_upload - DEBUG : post_cancer:BRCA
+2018-10-16 15:51:39,842 - root - user_upload - DEBUG : post_email:
+2018-10-16 15:51:39,849 - root - user_upload - DEBUG : successfully upload.
